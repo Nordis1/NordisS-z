@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">NordisQuiz</string>
+    <string name="btnStartGame">Start</string>
+    <string name="connectingToServer">Подключение к серверу…</string>
+    <string name="connecting_state_2">Сбор игроков…</string>
+    <string name="connecting_state_2.1">Сбор игроков…2</string>
+    <string name="connecting_state_2.2">Сбор игроков…3</string>
+    <string name="connecting_state_2.3">Сбор игроков…4</string>
+    <string name="connecting_state_2.4">Нет соединения…</string>
+    <string name="connecting_state_3">Старт…</string>
+
+
+
+    <string name="noInternetConnection">отсутсвует Интернет</string>
+    <string name="PlayerNames">Name</string>
+    <string name="profile">Профиль</string>
+    <string name="raitings">Рейтинг</string>
+    <string name="settings">Настройки</string>
+</resources>

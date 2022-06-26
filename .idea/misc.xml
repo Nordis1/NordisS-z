@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/btn_blue_custom.xml" value="0.225" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/btn_custom_green.xml" value="0.225" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/btn_red_custom.xml" value="0.225" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/btn_yellow_custom.xml" value="0.225" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/custombtn.xml" value="0.225" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/greencolor.xml" value="0.225" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/redcolor.xml" value="0.225" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/activity_start_quiz.xml" value="0.28804347826086957" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
