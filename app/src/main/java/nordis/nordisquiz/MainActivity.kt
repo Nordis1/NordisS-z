@@ -1,15 +1,21 @@
 package nordis.nordisquiz
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Drawable
+import android.media.Image
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import nordis.nordisquiz.databinding.ActivityMainBinding
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -23,6 +29,9 @@ private val executor = Executors.newCachedThreadPool();
 private const val TAG = "MainActivity"
 private var handler: Handler? = null
 var name: String? = null
+var userNameIs: String? = "Player0712"
+var userAvatarNameIs: String? = null
+var resultLauncher: ActivityResultLauncher<Intent>? = null
 
 open class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +40,7 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
         supportActionBar?.hide()
         setContentView(binding.root)
         binding.button.setOnClickListener(this)
+        binding.profilImage.setOnClickListener(this)
 
         handlerCreating()
         creatingQuestions()
@@ -38,6 +48,23 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
         Log.d(TAG, "onCreate: ")
 
     }
+
+    fun activityRequestResult() {
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    // There are no request codes
+                    val data: Intent? = result.data
+                    if (data != null) {
+                        if (data.hasExtra("Profil")) {
+
+
+                        }
+                    }
+                }
+            }
+    }
+
 
     fun creatingQuestions() {
         questResponseList.add(
@@ -198,7 +225,7 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.button -> {
+            binding.button.id -> {
                 binding.button.isEnabled = false
                 binding.progressBar.visibility = View.VISIBLE
                 if (CheckInternetClass().checkInternetAvailable(applicationContext)) {
@@ -237,6 +264,12 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
                 }
+            }
+            binding.profilImage.id->{
+                val intent = Intent(applicationContext, FragmentTransactionActivity::class.java)
+                intent.putExtra("transaction","UserProfile")
+                startActivity(intent)
+                //resultLauncher?.launch(intent)
             }
 
         }

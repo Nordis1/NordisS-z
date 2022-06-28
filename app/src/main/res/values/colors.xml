@@ -10,10 +10,12 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
+    <color name="black1">#BED4FA</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green">#1F8836</color>
     <color name="red">#C84641</color>
     <color name="red1">#AF3D38</color>
     <color name="yellow">#FFC000</color>
     <color name="yellow2">#C8FFC000</color>
+    <color name="invisible">#00000000</color>
 </resources>

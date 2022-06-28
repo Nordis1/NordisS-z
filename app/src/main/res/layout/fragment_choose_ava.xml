@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraint_AvaChoose"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/custom_backround_1"
+    tools:context=".fragments.ChooseAva">
+
+
+    <ImageButton
+        android:id="@+id/btnMan4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/m4"
+        android:tag="m4"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/btnMan5"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnMan1"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnMan5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/m5"
+        android:tag="m5"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/btnMan6"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnMan4"
+        app:layout_constraintTop_toBottomOf="@+id/btnMan2"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnMan6"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/m6"
+        android:tag="m6"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnMan5"
+        app:layout_constraintTop_toBottomOf="@+id/btnMan3"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnMan1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/btn_invisible"
+        android:src="@mipmap/m1"
+        android:tag="m1"
+        app:layout_constraintBottom_toTopOf="@+id/btnMan4"
+        app:layout_constraintEnd_toStartOf="@+id/btnMan2"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnWoman4"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnMan3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/m3"
+        android:tag="m3"
+        app:layout_constraintBottom_toTopOf="@+id/btnMan6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnMan2"
+        app:layout_constraintTop_toBottomOf="@+id/btnWoman6"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnMan2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/m2"
+        android:tag="m2"
+        app:layout_constraintBottom_toTopOf="@+id/btnMan5"
+        app:layout_constraintEnd_toStartOf="@+id/btnMan3"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnMan1"
+        app:layout_constraintTop_toBottomOf="@+id/btnWoman5"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnWoman4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/w4"
+        android:tag="w4"
+        app:layout_constraintBottom_toTopOf="@+id/btnMan1"
+        app:layout_constraintEnd_toStartOf="@+id/btnWoman5"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnWoman1"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnWoman6"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/w6"
+        android:tag="w6"
+        app:layout_constraintBottom_toTopOf="@+id/btnMan3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnWoman5"
+        app:layout_constraintTop_toBottomOf="@+id/btnWoman3"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnWoman5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/w5"
+        android:tag="w5"
+        app:layout_constraintBottom_toTopOf="@+id/btnMan2"
+        app:layout_constraintEnd_toStartOf="@+id/btnWoman6"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnWoman4"
+        app:layout_constraintTop_toBottomOf="@+id/btnWoman2"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnWoman1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/w1"
+        android:tag="w1"
+        app:layout_constraintBottom_toTopOf="@+id/btnWoman4"
+        app:layout_constraintEnd_toStartOf="@+id/btnWoman2"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnWoman2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/w2"
+        android:tag="w2"
+        app:layout_constraintBottom_toTopOf="@+id/btnWoman5"
+        app:layout_constraintEnd_toStartOf="@+id/btnWoman3"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnWoman1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <ImageButton
+        android:id="@+id/btnWoman3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:src="@mipmap/w3"
+        android:tag="w3"
+        app:layout_constraintBottom_toTopOf="@+id/btnWoman6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnWoman2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.26" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <Button
+        android:id="@+id/btnAcceptFragmentChoose"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/btn_yellow_custom"
+        android:text="@string/accept"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.055"
+        app:layout_constraintWidth_percent="0.3" />
+
+    <Button
+        android:id="@+id/btnCancelFragmentChoose"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/btn_yellow_custom"
+        android:text="@string/Cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.055"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
