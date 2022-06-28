@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import nordis.nordisquiz.databinding.ActivityStartQuizBinding
+import java.util.HashSet
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -77,24 +78,6 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    fun setToGreenColor(v: View?) {
-        if (v != null) {
-            v.setBackgroundResource(R.drawable.btn_custom_green)
-        }
-    }
-
-    fun setToYellowColor(v: View?) {
-        if (v != null) {
-            v.setBackgroundResource(R.drawable.btn_yellow_custom)
-        }
-    }
-
-    fun setToRedColor(v: View?) {
-        if (v != null) {
-            v.setBackgroundResource(R.drawable.btn_red_custom)
-        }
-    }
-
 
     fun gameStarting() {
         if (questResponseList.size != 0) {
@@ -127,23 +110,41 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
     }
 
     fun playerCreating(){
-        val innerList = ArrayList<String>()
-        while (innerList.size < 3){
-            val name: String = nanesList.get((0..nanesList.size).random())
-            if (!innerList.contains(name)){
-                Log.d(TAG, "playerCreating: in While cycle, name is : $name")
-                innerList.add(name)
-            }
+
+        val innerList1 = HashSet<String>()
+        while (innerList1.size != 3){
+            val name: String = nanesList[(0..nanesList.size).random()]
+            innerList1.add(name)
         }
-        for (item in innerList){
+        val random = (1..4).random()
+        for (item in innerList1){
+            if (random == 1){
+                map[userAvatarNameIs]
+                    ?.let { bindingStartQuiz.playerIcon1.setBackgroundResource(it) }
+                bindingStartQuiz.playerName1.text = userNameIs
+                //bindingStartQuiz.playerIcon2.setBackgroundResource()
+                bindingStartQuiz.playerName2.text = item
+            }else if (random == 2){
+                map[userAvatarNameIs]
+                    ?.let { bindingStartQuiz.playerIcon2.setBackgroundResource(it) }
+                bindingStartQuiz.playerName2.text = userNameIs
+            }else if (random == 3){
+                map[userAvatarNameIs]
+                    ?.let { bindingStartQuiz.playerIcon3.setBackgroundResource(it) }
+                bindingStartQuiz.playerName3.text = userNameIs
+            }else if (random == 4){
+                map[userAvatarNameIs]
+                    ?.let { bindingStartQuiz.playerIcon4.setBackgroundResource(it) }
+                bindingStartQuiz.playerName4.text = userNameIs
+            }
             Log.d(TAG, "playerCreating: Players come get Names $item")
-            if (bindingStartQuiz.userName2TV.text.equals(getString(R.string.PlayerNames))){
+/*            if (bindingStartQuiz.userName2TV.text.equals(getString(R.string.PlayerNames))){
                 bindingStartQuiz.userName2TV.text = item
             }else if (bindingStartQuiz.userName3TV.text.equals(getString(R.string.PlayerNames))){
                 bindingStartQuiz.userName3TV.text = item
             }else if (bindingStartQuiz.userName4TV.text.equals(getString(R.string.PlayerNames))){
                 bindingStartQuiz.userName4TV.text = item
-            }
+            }*/
         }
         //var name: String = nanesList.get((0..nanesList.size).random())
         //bindingStartQuiz.userNameTV.setText(name)
@@ -177,4 +178,23 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             handler1?.sendEmptyMessage(2)
         })
     }
+
+    fun setToGreenColor(v: View?) {
+        if (v != null) {
+            v.setBackgroundResource(R.drawable.btn_custom_green)
+        }
+    }
+
+    fun setToYellowColor(v: View?) {
+        if (v != null) {
+            v.setBackgroundResource(R.drawable.btn_yellow_custom)
+        }
+    }
+
+    fun setToRedColor(v: View?) {
+        if (v != null) {
+            v.setBackgroundResource(R.drawable.btn_red_custom)
+        }
+    }
+
 }

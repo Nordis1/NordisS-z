@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">NordisQuiz</string>
 
+    StartGameConnection
     <string name="connectingToServer">Подключение к серверу…</string>
     <string name="connecting_state_2">Сбор игроков…</string>
     <string name="connecting_state_2.1">Сбор игроков…2</string>
@@ -10,8 +11,9 @@
     <string name="connecting_state_3">Старт…</string>
 
 
+    InternetCheck
     <string name="noInternetConnection">отсутсвует Интернет</string>
-    <string name="PlayerNames">Name</string>
+
 
     MainMenu
     <string name="profile">Профиль</string>
@@ -19,11 +21,13 @@
     <string name="settings">Настройки</string>
     <string name="btnStartGame">Start</string>
 
-    <string name="nick">Введите имя или псевдоним</string>
-    <string name="chooseYourImage">Выберите Аватарку</string>
+    Fragments
+    <string name="nick">Введите имя</string>
     <string name="accept">Принять</string>
     <string name="Cancel">Отмена</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    MainMenu
+    <string name="UserStandardName">Игрок0710</string>
+
+    StartQuiz
+    <string name="PlayerNames">Name</string>
+
 </resources>

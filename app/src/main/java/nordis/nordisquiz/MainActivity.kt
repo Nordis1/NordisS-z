@@ -2,16 +2,14 @@ package nordis.nordisquiz
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
-import android.media.Image
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,11 +23,12 @@ import java.util.concurrent.TimeUnit
 private lateinit var binding: ActivityMainBinding
 val questResponseList = ArrayList<QuestionClass>()
 val nanesList = ArrayList<String>()
+val map = HashMap<String,Int>()
 private val executor = Executors.newCachedThreadPool();
 private const val TAG = "MainActivity"
 private var handler: Handler? = null
-var name: String? = null
-var userNameIs: String? = "Player0712"
+
+var userNameIs: String? = null
 var userAvatarNameIs: String? = null
 var resultLauncher: ActivityResultLauncher<Intent>? = null
 
@@ -39,13 +38,40 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         supportActionBar?.hide()
         setContentView(binding.root)
+        Log.d(TAG, "onCreate: ")
         binding.button.setOnClickListener(this)
         binding.profilImage.setOnClickListener(this)
+        imageMapCreating()//нужен тут, так как подгрузка картинок в методе onResume(), привязываеться к переменной map
 
         handlerCreating()
-        creatingQuestions()
-        creatingPlayerNames()
-        Log.d(TAG, "onCreate: ")
+        QuestCreator().createQuestions()// создаём базу вопросов
+        PlayerCreator().playerCreator()// Создаём базу игроков
+
+    }
+
+    fun profileInit(){
+
+        //Name init
+            getSharedPreferences("USERNAME", Context.MODE_PRIVATE)?.getString("userName","")?.let {
+                if (it.isEmpty()){
+                    userNameIs = getString(R.string.UserStandardName)
+                    binding.profileNameMain.text = userNameIs
+                }else{
+                    binding.profileNameMain.text = it
+
+                }
+            }
+
+        //Icon init
+            userAvatarNameIs = getSharedPreferences("AVATAR", Context.MODE_PRIVATE)
+                ?.getString("avatarName", "")
+            if (userAvatarNameIs == null || userAvatarNameIs.equals("") ) {
+                //binding.profilImage.setBackgroundResource(R.mipmap.user_profile2)
+                binding.profilImage.setBackgroundResource(R.mipmap.user_profile2)
+            }else{
+                map[userAvatarNameIs]
+                    ?.let { binding.profilImage.setBackgroundResource(it) }
+            }
 
     }
 
@@ -65,163 +91,6 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
     }
 
-
-    fun creatingQuestions() {
-        questResponseList.add(
-            QuestionClass(
-                "С какой из этих стран Чехия не граничит?",
-                "Венгрия", "Германия", "Австрия", "Польша"
-            )
-        )
-        questResponseList.add(
-            QuestionClass(
-                "Кто считается основоположником кубизма?",
-                "П. Пикассо", "В. Кандинский", "Ф. Леже", "К. Малевич"
-            )
-        )
-        questResponseList.add(
-            QuestionClass(
-                "Кто из этих знаменитых людей не является тезкой остальных?",
-                "Лужков", "Боярский", "Лермонтов", "Горбачев"
-            )
-        )
-
-        questResponseList.add(
-            QuestionClass(
-                "Какая березка стояла во поле?",
-                "Кудрявая", "Засохшая", "Зеленая", "Высокая"
-            )
-        )
-
-        questResponseList.add(
-            QuestionClass(
-                "Какая из этих кислот является витамином?",
-                "Никотиновая", "Янтарная", "Яблочная", "Молочная"
-            )
-        )
-
-        questResponseList.add(
-            QuestionClass(
-                "Территория какой из этих стран - наибольшая?",
-                "Япония", "Финляндия", "Италия", "Германия"
-            )
-        )
-
-        questResponseList.add(
-            QuestionClass(
-                "Какой из этих городов - родина Казановы?",
-                "Венеция", "Флоренция", "Милан", "Неаполь"
-            )
-        )
-
-        questResponseList.add(
-            QuestionClass(
-                "Чье произведение легло в основу оперы Дж. Верди 'Травиата'?",
-                "А.Дюма-сына", "Г. Флобера", "О. Бальзака", "В. Гюго"
-            )
-        )
-
-        questResponseList.add(
-            QuestionClass(
-                "Кто является чемпионом гонок 'Формулы-1' 1998-99 г.г.?",
-                "Хаккинен", "Кулхард", "Барикелло", "М. Шумахер"
-            )
-        )
-
-    }
-
-    fun creatingPlayerNames() {
-        nanesList.add("Александр")
-        nanesList.add("Алексей")
-        nanesList.add("Андрей")
-        nanesList.add("Антон")
-        nanesList.add("Арсений")
-        nanesList.add("Артем")
-        nanesList.add("Василий")
-        nanesList.add("Василий")
-        nanesList.add("Виктор")
-        nanesList.add("Виталий")
-        nanesList.add("Владимир")
-        nanesList.add("Владислав")
-        nanesList.add("Вячеслав")
-        nanesList.add("Георгий")
-        nanesList.add("Глеб")
-        nanesList.add("Давид")
-        nanesList.add("Даниил")
-        nanesList.add("Денис")
-        nanesList.add("Дмитрий")
-        nanesList.add("Евгений")
-        nanesList.add("Егор")
-        nanesList.add("Иван")
-        nanesList.add("Игорь")
-        nanesList.add("Илья")
-        nanesList.add("Кирилл")
-        nanesList.add("Константин")
-        nanesList.add("Лев")
-        nanesList.add("Максим")
-        nanesList.add("Марк")
-        nanesList.add("Матвей")
-        nanesList.add("Михаил")
-        nanesList.add("Никита")
-        nanesList.add("Николай")
-        nanesList.add("Олег")
-        nanesList.add("Павел")
-        nanesList.add("Роман")
-        nanesList.add("Руслан")
-        nanesList.add("Сергей")
-        nanesList.add("Станислав")
-        nanesList.add("Степан")
-        nanesList.add("Тимофей")
-        nanesList.add("Тимур")
-        nanesList.add("Федор")
-        nanesList.add("Юрий")
-        nanesList.add("Ярослав")
-        nanesList.add("Александра")
-        nanesList.add("Алена")
-        nanesList.add("Алина")
-        nanesList.add("Алиса")
-        nanesList.add("Анастасия")
-        nanesList.add("Ангелина")
-        nanesList.add("Анна")
-        nanesList.add("Арина")
-        nanesList.add("Валерия")
-        nanesList.add("Варвара")
-        nanesList.add("Василиса")
-        nanesList.add("Вера")
-        nanesList.add("Вероника")
-        nanesList.add("Виктория")
-        nanesList.add("Дарья")
-        nanesList.add("Диана")
-        nanesList.add("Ева")
-        nanesList.add("Евгения")
-        nanesList.add("Екатерина")
-        nanesList.add("Елена")
-        nanesList.add("Елизавета")
-        nanesList.add("Злата")
-        nanesList.add("Ирина")
-        nanesList.add("Карина")
-        nanesList.add("Кира")
-        nanesList.add("Кристина")
-        nanesList.add("Ксения")
-        nanesList.add("Лилия")
-        nanesList.add("Любовь")
-        nanesList.add("Людмила")
-        nanesList.add("Маргарита")
-        nanesList.add("Марина")
-        nanesList.add("Мария")
-        nanesList.add("Милана")
-        nanesList.add("Надежда")
-        nanesList.add("Наталья")
-        nanesList.add("Ольга")
-        nanesList.add("Полина")
-        nanesList.add("Светлана")
-        nanesList.add("София")
-        nanesList.add("Таисия")
-        nanesList.add("Ульяна")
-        nanesList.add("Юлия")
-        nanesList.add("Яна")
-        nanesList.shuffle()
-    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -319,4 +188,47 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
+
+    override fun onStart() {
+        Log.d(TAG, "onStart: ")
+        super.onStart()
+    }
+
+    override fun onResume() {
+        Log.d(TAG, "onResume: ")
+        profileInit()
+        super.onResume()
+    }
+    override fun onPause() {
+        Log.d(TAG, "onPause: ")
+        super.onPause()
+
+    }
+
+    override fun onStop() {
+        Log.d(TAG, "onStop: ")
+        super.onStop()
+    }
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy: ")
+        super.onDestroy()
+    }
+    fun imageMapCreating(){
+        map["st"] = R.mipmap.user_profile2
+        map["m1"] = R.mipmap.m1
+        map["m2"] = R.mipmap.m2
+        map["m3"] = R.mipmap.m3
+        map["m4"] = R.mipmap.m4
+        map["m5"] = R.mipmap.m5
+        map["m6"] = R.mipmap.m6
+        map["w1"] = R.mipmap.w1
+        map["w2"] = R.mipmap.w2
+        map["w3"] = R.mipmap.w3
+        map["w4"] = R.mipmap.w4
+        map["w5"] = R.mipmap.w5
+        map["w6"] = R.mipmap.w6
+    }
+
+    
 }
