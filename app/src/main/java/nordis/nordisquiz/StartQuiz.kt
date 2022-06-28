@@ -1,7 +1,6 @@
 package nordis.nordisquiz
 
 import android.annotation.SuppressLint
-import androidx.databinding.DataBindingUtil.setContentView
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -111,17 +110,45 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
 
     fun playerCreating(){
 
-        val innerList1 = HashSet<String>()
-        while (innerList1.size != 3){
+        val innerHashListForRandomName = HashSet<String>()
+        val hashListForGetRandomImage = HashSet<String>()
+
+        //Получаем рандомный лист с именами 3 штуки  для подгрузки побов
+        while (innerHashListForRandomName.size != 3){
             val name: String = nanesList[(0..nanesList.size).random()]
-            innerList1.add(name)
+            innerHashListForRandomName.add(name)
         }
+
+        //Получаем рандомные 3 числа от 1 до 50 для подгрузки разных аватаров
+        while (hashListForGetRandomImage.size < 3){
+            (1..50).random().toString().let { hashListForGetRandomImage.add(it) }
+        }
+
+        //Этот рандом создаётся для для позиции Пользователя
         val random = (1..4).random()
-        for (item in innerList1){
+        for (item in innerHashListForRandomName){
             if (random == 1){
+                //Загрузка пользователя
                 map[userAvatarNameIs]
                     ?.let { bindingStartQuiz.playerIcon1.setBackgroundResource(it) }
                 bindingStartQuiz.playerName1.text = userNameIs
+
+                //Загрука ботов
+                var count: Int = 2
+                for (playeritem in hashListForGetRandomImage){
+                    if (count == 2) {
+                        map[playeritem]?.let { bindingStartQuiz.playerIcon2.setBackgroundResource(it) }
+                        bindingStartQuiz.playerName2.text = item
+                        count++
+                    }else if (count == 3){
+                        map[playeritem]?.let { bindingStartQuiz.playerIcon3.setBackgroundResource(it) }
+                        count++
+                    }else if (count == 4){
+                        map[playeritem]?.let { bindingStartQuiz.playerIcon4.setBackgroundResource(it) }
+                        count++
+                    }
+                }
+
                 //bindingStartQuiz.playerIcon2.setBackgroundResource()
                 bindingStartQuiz.playerName2.text = item
             }else if (random == 2){

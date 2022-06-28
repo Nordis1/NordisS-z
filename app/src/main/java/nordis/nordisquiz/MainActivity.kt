@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Transformations.map
 import nordis.nordisquiz.databinding.ActivityMainBinding
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -52,7 +53,7 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
     fun profileInit(){
 
         //Name init
-            getSharedPreferences("USERNAME", Context.MODE_PRIVATE)?.getString("userName","")?.let {
+   /*         getSharedPreferences("USERNAME", Context.MODE_PRIVATE)?.getString("userName","")?.let {
                 if (it.isEmpty()){
                     userNameIs = getString(R.string.UserStandardName)
                     binding.profileNameMain.text = userNameIs
@@ -60,7 +61,7 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
                     binding.profileNameMain.text = it
 
                 }
-            }
+            }*/
 
         //Icon init
             userAvatarNameIs = getSharedPreferences("AVATAR", Context.MODE_PRIVATE)
@@ -216,18 +217,56 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
     fun imageMapCreating(){
         map["st"] = R.mipmap.user_profile2
-        map["m1"] = R.mipmap.m1
-        map["m2"] = R.mipmap.m2
-        map["m3"] = R.mipmap.m3
-        map["m4"] = R.mipmap.m4
-        map["m5"] = R.mipmap.m5
-        map["m6"] = R.mipmap.m6
-        map["w1"] = R.mipmap.w1
-        map["w2"] = R.mipmap.w2
-        map["w3"] = R.mipmap.w3
-        map["w4"] = R.mipmap.w4
-        map["w5"] = R.mipmap.w5
-        map["w6"] = R.mipmap.w6
+        map["1"] = R.mipmap.ico1
+        map["2"] = R.mipmap.ico2
+        map["3"] = R.mipmap.ico3
+        map["4"] = R.mipmap.ico4
+        map["5"] = R.mipmap.ico5
+        map["6"] = R.mipmap.ico6
+        map["7"] = R.mipmap.ico7
+        map["8"] = R.mipmap.ico8
+        map["9"] = R.mipmap.ico9
+        map["10"] = R.mipmap.ico10
+        map["11"] = R.mipmap.ico11
+        map["12"] = R.mipmap.ico12
+        map["13"] = R.mipmap.ico13
+        map["14"] = R.mipmap.ico14
+        map["15"] = R.mipmap.ico15
+        map["16"] = R.mipmap.ico16
+        map["17"] = R.mipmap.ico17
+        map["18"] = R.mipmap.ico18
+        map["19"] = R.mipmap.ico19
+        map["20"] = R.mipmap.ico20
+        map["21"] = R.mipmap.ico21
+        map["22"] = R.mipmap.ico22
+        map["23"] = R.mipmap.ico23
+        map["24"] = R.mipmap.ico24
+        map["25"] = R.mipmap.ico25
+        map["26"] = R.mipmap.ico26
+        map["27"] = R.mipmap.ico27
+        map["28"] = R.mipmap.ico28
+        map["29"] = R.mipmap.ico29
+        map["30"] = R.mipmap.ico30
+        map["31"] = R.mipmap.ico31
+        map["32"] = R.mipmap.ico32
+        map["33"] = R.mipmap.ico33
+        map["34"] = R.mipmap.ico34
+        map["35"] = R.mipmap.ico35
+        map["36"] = R.mipmap.ico36
+        map["37"] = R.mipmap.ico37
+        map["38"] = R.mipmap.ico38
+        map["39"] = R.mipmap.ico39
+        map["40"] = R.mipmap.ico40
+        map["41"] = R.mipmap.ico41
+        map["42"] = R.mipmap.ico42
+        map["43"] = R.mipmap.ico43
+        map["44"] = R.mipmap.ico44
+        map["45"] = R.mipmap.ico45
+        map["46"] = R.mipmap.ico46
+        map["47"] = R.mipmap.ico47
+        map["48"] = R.mipmap.ico48
+        map["49"] = R.mipmap.ico49
+        map["50"] = R.mipmap.ico50
     }
 
     
