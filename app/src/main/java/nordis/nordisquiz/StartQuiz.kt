@@ -1,20 +1,23 @@
 package nordis.nordisquiz
 
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import nordis.nordisquiz.databinding.ActivityStartQuizBinding
-import java.util.HashSet
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
+
 private const val TAG = "StartQuiz"
 private val executorStartQuiz = Executors.newCachedThreadPool();
+val playerMap = HashMap<String, ImageView>()
 
 @SuppressLint("StaticFieldLeak")
 private lateinit var bindingStartQuiz: ActivityStartQuizBinding
@@ -47,6 +50,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         when (rightPlace) {
             1 -> if (v == bindingStartQuiz.btnResponse1) {
                 setToGreenColor(bindingStartQuiz.btnResponse1)
+                playerMap["user"]?.setBackgroundResource(R.drawable.shadow)
                 Log.d(TAG, "onClick: Variant 1 : Ответ правильный")
             } else if (v != null) {
                 setToRedColor(v)
@@ -54,6 +58,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             }
             2 -> if (v == bindingStartQuiz.btnResponse2) {
                 setToGreenColor(bindingStartQuiz.btnResponse2)
+                playerMap["user"]?.setBackgroundResource(R.drawable.shadow)
                 Log.d(TAG, "onClick: Variant 2 : Ответ правильный")
             } else if (v != null) {
                 setToRedColor(v)
@@ -61,6 +66,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             }
             3 -> if (v == bindingStartQuiz.btnResponse3) {
                 setToGreenColor(bindingStartQuiz.btnResponse3)
+                playerMap["user"]?.setBackgroundResource(R.drawable.shadow)
                 Log.d(TAG, "onClick: Variant 3 : Ответ правильный")
             } else if (v != null) {
                 setToRedColor(v)
@@ -68,6 +74,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             }
             4 -> if (v == bindingStartQuiz.btnResponse4) {
                 setToGreenColor(bindingStartQuiz.btnResponse4)
+                playerMap["user"]?.setBackgroundResource(R.drawable.shadow)
                 Log.d(TAG, "onClick: Variant 4 : Ответ правильный")
             } else if (v != null) {
                 setToRedColor(v)
@@ -108,73 +115,231 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun playerCreating(){
+    fun playerCreating() {
 
-        val innerHashListForRandomName = HashSet<String>()
-        val hashListForGetRandomImage = HashSet<String>()
+        /** Подготовка к распределению! */
+        val innerArrayNames = ArrayList<String>()
+        val innerArrayImages = ArrayList<String>()
 
         //Получаем рандомный лист с именами 3 штуки  для подгрузки побов
-        while (innerHashListForRandomName.size != 3){
-            val name: String = nanesList[(0..nanesList.size).random()]
-            innerHashListForRandomName.add(name)
-        }
+        while (innerArrayNames.size != 3) {
+            /** Создаём бабу или мужика(Чётные мужики, нечётные бабы)*/
+            run playerCreator@{
+                (0..10).random().let {
+                    if (it % 2 == 0) {
+                        /** Создаём имя мужику*/
+                        nameMenList[(0 until nameMenList.size).random()].let {
+                            if (!innerArrayNames.contains(it)) {
+                                innerArrayNames.add(it)
+                                Log.d(TAG, "playerCreating: Создали имя мужчины $it")
+                            } else return@playerCreator
+                        }
+                        /**Теперь создаём картинку мужику*/
 
-        //Получаем рандомные 3 числа от 1 до 50 для подгрузки разных аватаров
-        while (hashListForGetRandomImage.size < 3){
-            (1..50).random().toString().let { hashListForGetRandomImage.add(it) }
+                            val count1 = innerArrayImages.size
+                            while (count1 == innerArrayImages.size) {
+                                (1..50).random().let {
+                                    /** Если женский список не содержит этого номера то пихаем*/
+                                    if (!numbersOfWomenList.contains(it) && !innerArrayImages.contains(it.toString())) {
+                                        innerArrayImages.add(it.toString())
+                                        Log.d(TAG, "playerCreating: Создали Мужскую иконку $it"
+                                        )
+                                    }
+                                }
+                            }
+
+                    } else {
+                        /** Создаём женщину */
+                        nameWomenList[(0 until nameWomenList.size).random()].let {
+                            if (!innerArrayNames.contains(it)) {
+                                innerArrayNames.add(it)
+                                Log.d(TAG, "playerCreating: Создали имя женщины $it")
+                            } else return@playerCreator
+                        }
+
+                        /** Теперь создаём картинку женщине */
+                        val count2 = innerArrayImages.size
+                        while (count2 == innerArrayImages.size) {
+                            (1..50).random().let {
+                                /** Если женский список содержит этого номера то пихаем*/
+                                if (numbersOfWomenList.contains(it) && !innerArrayImages.contains(it.toString()) ) {
+                                    innerArrayImages.add(it.toString())
+                                    Log.d(TAG, "playerCreating: Создали Женскую иконку $it"
+                                    )
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
         }
 
         //Этот рандом создаётся для для позиции Пользователя
+        /** Старт главного распределения */
         val random = (1..4).random()
-        for (item in innerHashListForRandomName){
-            if (random == 1){
-                //Загрузка пользователя
-                map[userAvatarNameIs]
-                    ?.let { bindingStartQuiz.playerIcon1.setBackgroundResource(it) }
-                bindingStartQuiz.playerName1.text = userNameIs
+        if (random == 1) {
+            /** Сначала размещаем пользователя */
+            map[userAvatarNameIs]
+                ?.let { bindingStartQuiz.playerIcon1.setImageResource(it) }
+            bindingStartQuiz.playerName1.text = userNameIs
+            playerMap["user"] = bindingStartQuiz.playerIcon1
 
-                //Загрука ботов
-                var count: Int = 2
-                for (playeritem in hashListForGetRandomImage){
-                    if (count == 2) {
-                        map[playeritem]?.let { bindingStartQuiz.playerIcon2.setBackgroundResource(it) }
-                        bindingStartQuiz.playerName2.text = item
-                        count++
-                    }else if (count == 3){
-                        map[playeritem]?.let { bindingStartQuiz.playerIcon3.setBackgroundResource(it) }
-                        count++
-                    }else if (count == 4){
-                        map[playeritem]?.let { bindingStartQuiz.playerIcon4.setBackgroundResource(it) }
-                        count++
+            /** После основного пользователя размещаем остальных ботов */
+            for (i in 0..2) {
+                if (i == 0) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName2.text = it }
+                    playerMap["bot1"] = bindingStartQuiz.playerIcon2
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon2.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                } else if (i == 1) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName3.text = it }
+                    playerMap["bot2"] = bindingStartQuiz.playerIcon3
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon3.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                } else if (i == 2) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName4.text = it }
+                    playerMap["bot3"] = bindingStartQuiz.playerIcon4
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon4.setImageResource(
+                                it1
+                            )
+                        }
                     }
                 }
-
-                //bindingStartQuiz.playerIcon2.setBackgroundResource()
-                bindingStartQuiz.playerName2.text = item
-            }else if (random == 2){
-                map[userAvatarNameIs]
-                    ?.let { bindingStartQuiz.playerIcon2.setBackgroundResource(it) }
-                bindingStartQuiz.playerName2.text = userNameIs
-            }else if (random == 3){
-                map[userAvatarNameIs]
-                    ?.let { bindingStartQuiz.playerIcon3.setBackgroundResource(it) }
-                bindingStartQuiz.playerName3.text = userNameIs
-            }else if (random == 4){
-                map[userAvatarNameIs]
-                    ?.let { bindingStartQuiz.playerIcon4.setBackgroundResource(it) }
-                bindingStartQuiz.playerName4.text = userNameIs
             }
-            Log.d(TAG, "playerCreating: Players come get Names $item")
-/*            if (bindingStartQuiz.userName2TV.text.equals(getString(R.string.PlayerNames))){
-                bindingStartQuiz.userName2TV.text = item
-            }else if (bindingStartQuiz.userName3TV.text.equals(getString(R.string.PlayerNames))){
-                bindingStartQuiz.userName3TV.text = item
-            }else if (bindingStartQuiz.userName4TV.text.equals(getString(R.string.PlayerNames))){
-                bindingStartQuiz.userName4TV.text = item
-            }*/
+        } else if (random == 2) {
+            map[userAvatarNameIs]
+                ?.let { bindingStartQuiz.playerIcon2.setImageResource(it) }
+            playerMap["user"] = bindingStartQuiz.playerIcon2
+            bindingStartQuiz.playerName2.text = userNameIs
+
+            for (i in 0..2) {
+                if (i == 0) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName1.text = it }
+                    playerMap["bot1"] = bindingStartQuiz.playerIcon1
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon1.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                } else if (i == 1) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName3.text = it }
+                    playerMap["bot2"] = bindingStartQuiz.playerIcon3
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon3.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                } else if (i == 2) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName4.text = it }
+                    playerMap["bot3"] = bindingStartQuiz.playerIcon4
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon4.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                }
+            }
+        } else if (random == 3) {
+            map[userAvatarNameIs]
+                ?.let { bindingStartQuiz.playerIcon3.setImageResource(it) }
+            playerMap["user"] = bindingStartQuiz.playerIcon3
+            bindingStartQuiz.playerName3.text = userNameIs
+
+            for (i in 0..2) {
+                if (i == 0) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName1.text = it }
+                    playerMap["bot1"] = bindingStartQuiz.playerIcon1
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon1.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                } else if (i == 1) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName2.text = it }
+                    playerMap["bot2"] = bindingStartQuiz.playerIcon2
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon2.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                } else if (i == 2) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName4.text = it }
+                    playerMap["bot3"] = bindingStartQuiz.playerIcon4
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon4.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                }
+            }
+
+        } else if (random == 4) {
+            map[userAvatarNameIs]
+                ?.let { bindingStartQuiz.playerIcon4.setImageResource(it) }
+            playerMap["user"] = bindingStartQuiz.playerIcon4
+            bindingStartQuiz.playerName4.text = userNameIs
+
+            for (i in 0..2) {
+                if (i == 0) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName1.text = it }
+                    playerMap["bot1"] = bindingStartQuiz.playerIcon1
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon1.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                } else if (i == 1) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName2.text = it }
+                    playerMap["bot2"] = bindingStartQuiz.playerIcon2
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon2.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                } else if (i == 2) {
+                    innerArrayNames[i].let { bindingStartQuiz.playerName3.text = it }
+                    playerMap["bot3"] = bindingStartQuiz.playerIcon3
+                    innerArrayImages[i].let {
+                        map[it]?.let { it1 ->
+                            bindingStartQuiz.playerIcon3.setImageResource(
+                                it1
+                            )
+                        }
+                    }
+                }
+            }
         }
-        //var name: String = nanesList.get((0..nanesList.size).random())
-        //bindingStartQuiz.userNameTV.setText(name)
+
+
     }
 
     private fun handlerCreating() {
@@ -184,7 +349,11 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     1 -> bindingStartQuiz.timer.setText(timeCounter.toString())
                     2 -> {
                         val dialog = DialogClass(
-                            bindingStartQuiz.root.context, "Время вышло", "Вы не ответили на вопрос во время!", null, null
+                            bindingStartQuiz.root.context,
+                            "Время вышло",
+                            "Вы не ответили на вопрос во время!",
+                            null,
+                            null
                         )
                         dialog.standartDialogMessage()
 

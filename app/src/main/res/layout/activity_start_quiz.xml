@@ -117,11 +117,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
         app:layout_constraintEnd_toStartOf="@+id/playerIcon4"
-        app:layout_constraintHeight_percent="0.06"
+        app:layout_constraintHeight_percent="0.057"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/playerIcon2"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintWidth_percent="0.1" />
+        app:layout_constraintWidth_percent="0.101" />
 
     <ImageView
         android:id="@+id/playerIcon1"
@@ -129,11 +129,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
         app:layout_constraintEnd_toStartOf="@+id/playerIcon2"
-        app:layout_constraintHeight_percent="0.06"
+        app:layout_constraintHeight_percent="0.057"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintWidth_percent="0.1" />
+        app:layout_constraintWidth_percent="0.101" />
 
     <ImageView
         android:id="@+id/playerIcon2"
@@ -141,11 +141,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
         app:layout_constraintEnd_toStartOf="@+id/playerIcon3"
-        app:layout_constraintHeight_percent="0.06"
+        app:layout_constraintHeight_percent="0.057"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/playerIcon1"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintWidth_percent="0.1" />
+        app:layout_constraintWidth_percent="0.101" />
 
     <ImageView
         android:id="@+id/playerIcon4"
@@ -153,11 +153,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.06"
+        app:layout_constraintHeight_percent="0.057"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/playerIcon3"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintWidth_percent="0.1" />
+        app:layout_constraintWidth_percent="0.101" />
 
     <TextView
         android:id="@+id/playerName1"
@@ -167,6 +167,7 @@
         android:fontFamily="@font/aldrich"
         android:text="@string/PlayerNames"
         android:textColor="@color/yellow2"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/playerIcon1"
         app:layout_constraintStart_toStartOf="@+id/playerIcon1"
         app:layout_constraintTop_toBottomOf="@+id/playerIcon1" />
@@ -179,6 +180,7 @@
         android:fontFamily="@font/aldrich"
         android:text="@string/PlayerNames"
         android:textColor="@color/yellow2"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/playerIcon2"
         app:layout_constraintStart_toStartOf="@+id/playerIcon2"
         app:layout_constraintTop_toBottomOf="@+id/playerIcon2" />
@@ -191,6 +193,7 @@
         android:fontFamily="@font/aldrich"
         android:text="@string/PlayerNames"
         android:textColor="@color/yellow2"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/playerIcon3"
         app:layout_constraintStart_toStartOf="@+id/playerIcon3"
         app:layout_constraintTop_toBottomOf="@+id/playerIcon3" />
@@ -203,52 +206,9 @@
         android:fontFamily="@font/aldrich"
         android:text="@string/PlayerNames"
         android:textColor="@color/yellow2"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/playerIcon4"
         app:layout_constraintStart_toStartOf="@+id/playerIcon4"
         app:layout_constraintTop_toBottomOf="@+id/playerIcon4" />
-
-    <ImageView
-        android:id="@+id/PlayerGetResponse1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="2dp"
-        app:layout_constraintBottom_toBottomOf="@+id/playerIcon1"
-        app:layout_constraintEnd_toStartOf="@+id/playerIcon1"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintVertical_bias="0.25"
-        app:srcCompat="@mipmap/dote" />
-
-    <ImageView
-        android:id="@+id/PlayerGetResponse2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="2dp"
-        app:layout_constraintBottom_toBottomOf="@+id/playerIcon2"
-        app:layout_constraintEnd_toStartOf="@+id/playerIcon2"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintVertical_bias="0.25"
-        app:srcCompat="@mipmap/dote" />
-
-    <ImageView
-        android:id="@+id/PlayerGetResponse3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="2dp"
-        app:layout_constraintBottom_toBottomOf="@+id/playerIcon3"
-        app:layout_constraintEnd_toStartOf="@+id/playerIcon3"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintVertical_bias="0.25"
-        app:srcCompat="@mipmap/dote" />
-
-    <ImageView
-        android:id="@+id/PlayerGetResponse4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="2dp"
-        app:layout_constraintBottom_toBottomOf="@+id/playerIcon4"
-        app:layout_constraintEnd_toStartOf="@+id/playerIcon4"
-        app:layout_constraintTop_toTopOf="@+id/playerIcon4"
-        app:layout_constraintVertical_bias="0.25"
-        app:srcCompat="@mipmap/dote" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

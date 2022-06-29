@@ -59,11 +59,11 @@ class UserProfile : Fragment(), View.OnClickListener {
             ?.getString("avatarName", "")
         if (userAvatarNameIs == null || userAvatarNameIs.equals("") ) {
             //Если инфы нет тогда загружаем обычную
-            bindingUserProfile.UserMainAvatar.setBackgroundResource(R.mipmap.user_profile2)
+            bindingUserProfile.UserMainAvatar.setImageResource(R.mipmap.user_profile2)
             activity?.getSharedPreferences("AVATAR", Context.MODE_PRIVATE)?.edit()?.putString("avatarName","st")?.apply()
         }else{
             map[userAvatarNameIs]
-                ?.let { bindingUserProfile.UserMainAvatar.setBackgroundResource(it) }
+                ?.let { bindingUserProfile.UserMainAvatar.setImageResource(it) }
         }
     }
 

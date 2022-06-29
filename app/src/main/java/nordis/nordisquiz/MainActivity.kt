@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Transformations.map
 import nordis.nordisquiz.databinding.ActivityMainBinding
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -23,7 +22,9 @@ import java.util.concurrent.TimeUnit
 @SuppressLint("StaticFieldLeak")
 private lateinit var binding: ActivityMainBinding
 val questResponseList = ArrayList<QuestionClass>()
-val nanesList = ArrayList<String>()
+val nameMenList = ArrayList<String>()
+val nameWomenList = ArrayList<String>()
+val numbersOfWomenList = ArrayList<Int>()
 val map = HashMap<String,Int>()
 private val executor = Executors.newCachedThreadPool();
 private const val TAG = "MainActivity"
@@ -46,22 +47,23 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         handlerCreating()
         QuestCreator().createQuestions()// создаём базу вопросов
-        PlayerCreator().playerCreator()// Создаём базу игроков
+        PlayerNameCreator().menCreator()// Создаём базу игроков
+        PlayerNameCreator().womenCreator()// Создаём базу игроков
+        PlayerNameCreator().womenNumeresCreator()// Создаём базу игроков
 
     }
 
     fun profileInit(){
 
         //Name init
-   /*         getSharedPreferences("USERNAME", Context.MODE_PRIVATE)?.getString("userName","")?.let {
+            getSharedPreferences("USERNAME", Context.MODE_PRIVATE)?.getString("userName","")?.let {
                 if (it.isEmpty()){
                     userNameIs = getString(R.string.UserStandardName)
-                    binding.profileNameMain.text = userNameIs
                 }else{
-                    binding.profileNameMain.text = it
+                    userNameIs = it
 
                 }
-            }*/
+            }
 
         //Icon init
             userAvatarNameIs = getSharedPreferences("AVATAR", Context.MODE_PRIVATE)
@@ -108,7 +110,7 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
                             if (CheckInternetClass().checkInternetAvailable(applicationContext)) {
                                 Log.d(TAG, "onClick: Incrementing Players $i")
                                 handler?.sendEmptyMessage(i)//Сбор игроков
-                                TimeUnit.SECONDS.sleep((1..4).random().toLong())
+                                TimeUnit.MILLISECONDS.sleep((500..1500).random().toLong())
                             } else {
                                 Log.d(TAG, "onClick: No Internet to Incrementing")
                                 handler?.sendEmptyMessage(8)
