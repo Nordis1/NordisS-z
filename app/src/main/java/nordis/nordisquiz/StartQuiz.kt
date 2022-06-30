@@ -8,6 +8,7 @@ import android.os.Looper
 import android.os.Message
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import nordis.nordisquiz.databinding.ActivityStartQuizBinding
@@ -18,14 +19,20 @@ import java.util.concurrent.TimeUnit
 private const val TAG = "StartQuiz"
 private val executorStartQuiz = Executors.newCachedThreadPool();
 val playerMap = HashMap<String, ImageView>()
+val botAIList = ArrayList<BotAI>()
 
 @SuppressLint("StaticFieldLeak")
 private lateinit var bindingStartQuiz: ActivityStartQuizBinding
 
-private var handler1: Handler? = null
-private var questNumber: Int = 0
-private var rightPlace: Int = 0
-private var timeCounter: Int = 10
+private var handler: Handler? = null
+private var questNumber: Int = -1
+private var rightPlace: Int = -1
+private var timeCounter: Int = 20
+private var botAIEasy = 70
+private var botAINormal = 80
+private var botAIHard = 90
+private var roundTime = 20
+private var countResponse = 0
 
 class StartQuiz : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,17 +44,39 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         bindingStartQuiz.btnResponse3.setOnClickListener(this)
         bindingStartQuiz.btnResponse4.setOnClickListener(this)
         handlerCreating()
-        gameStarting()
-        playerCreating()
-        //startTimer()
+        gameHasStart() // Начинаем игру запуская игроков и объявление вопроса
+        questionsPrepare() //тут задаёться вопрос и загружаються варианты ответов
+        playerCreating() // тут создаються боты и сам пользователь
 
 
+
+    }
+
+    fun gameHasStart(){
+        executorStartQuiz.execute(Runnable {
+            TimeUnit.MILLISECONDS.sleep(1600)
+            handler?.sendEmptyMessage(0)
+            TimeUnit.MILLISECONDS.sleep(1400)
+            handler?.sendEmptyMessage(1)
+
+        })
     }
 
     @SuppressLint("ResourceAsColor")
     override fun onClick(v: View?) {
 
-        when (rightPlace) {
+        when(v){
+            bindingStartQuiz.btnResponse1->{checkCountResponse()
+            userGaveResponse(bindingStartQuiz.btnResponse1)}
+            bindingStartQuiz.btnResponse2->{checkCountResponse()
+                userGaveResponse(bindingStartQuiz.btnResponse2)}
+            bindingStartQuiz.btnResponse3->{checkCountResponse()
+                userGaveResponse(bindingStartQuiz.btnResponse3)}
+            bindingStartQuiz.btnResponse4->{checkCountResponse()
+                userGaveResponse(bindingStartQuiz.btnResponse4)}
+        }
+
+/*        when (rightPlace) {
             1 -> if (v == bindingStartQuiz.btnResponse1) {
                 setToGreenColor(bindingStartQuiz.btnResponse1)
                 playerMap["user"]?.setBackgroundResource(R.drawable.shadow)
@@ -80,37 +109,53 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                 setToRedColor(v)
                 Log.d(TAG, "onClick: Variant 4: Ответ не правильный")
             }
-        }
+        }*/
 
+    }
+    fun userGaveResponse(button: Button){
+        setToYellowColor(button)
+        bindingStartQuiz.btnResponse1.isEnabled  = false
+        bindingStartQuiz.btnResponse2.isEnabled  = false
+        bindingStartQuiz.btnResponse3.isEnabled  = false
+        bindingStartQuiz.btnResponse4.isEnabled  = false
     }
 
 
-    fun gameStarting() {
+    fun questionsPrepare() {
         if (questResponseList.size != 0) {
-            rightPlace = (1..4).random()
-            questNumber = (0 until questResponseList.size).random()
+            if (questResponseList.isEmpty()){
+                this.onBackPressed()
+            }
+            if (questNumber == -1){
+                rightPlace = (1..4).random()
+                questNumber = (0 until questResponseList.size).random()
+            }else{
+                questResponseList.removeAt(questNumber)
+                rightPlace = (1..4).random()
+                questNumber = (0 until questResponseList.size).random()
+            }
 
-            bindingStartQuiz.questionPlace.setText(questResponseList.get(questNumber).question)
+            bindingStartQuiz.questionPlace.text = questResponseList[questNumber].question
             if (rightPlace == 1) {
-                bindingStartQuiz.btnResponse1.setText(questResponseList.get(questNumber).rightResponse)
-                bindingStartQuiz.btnResponse2.setText(questResponseList.get(questNumber).response2)
-                bindingStartQuiz.btnResponse3.setText(questResponseList.get(questNumber).response3)
-                bindingStartQuiz.btnResponse4.setText(questResponseList.get(questNumber).response4)
+                bindingStartQuiz.btnResponse1.text = (questResponseList[questNumber].rightResponse)
+                bindingStartQuiz.btnResponse2.text = (questResponseList[questNumber].response2)
+                bindingStartQuiz.btnResponse3.text = (questResponseList[questNumber].response3)
+                bindingStartQuiz.btnResponse4.text = (questResponseList[questNumber].response4)
             } else if (rightPlace == 2) {
-                bindingStartQuiz.btnResponse1.setText(questResponseList.get(questNumber).response2)
-                bindingStartQuiz.btnResponse2.setText(questResponseList.get(questNumber).rightResponse)
-                bindingStartQuiz.btnResponse3.setText(questResponseList.get(questNumber).response3)
-                bindingStartQuiz.btnResponse4.setText(questResponseList.get(questNumber).response4)
+                bindingStartQuiz.btnResponse1.text = (questResponseList[questNumber].response2)
+                bindingStartQuiz.btnResponse2.text = (questResponseList[questNumber].rightResponse)
+                bindingStartQuiz.btnResponse3.text = (questResponseList[questNumber].response3)
+                bindingStartQuiz.btnResponse4.text = (questResponseList[questNumber].response4)
             } else if (rightPlace == 3) {
-                bindingStartQuiz.btnResponse1.setText(questResponseList.get(questNumber).response2)
-                bindingStartQuiz.btnResponse2.setText(questResponseList.get(questNumber).response3)
-                bindingStartQuiz.btnResponse3.setText(questResponseList.get(questNumber).rightResponse)
-                bindingStartQuiz.btnResponse4.setText(questResponseList.get(questNumber).response4)
+                bindingStartQuiz.btnResponse1.text = (questResponseList[questNumber].response2)
+                bindingStartQuiz.btnResponse2.text = (questResponseList[questNumber].response3)
+                bindingStartQuiz.btnResponse3.text = (questResponseList[questNumber].rightResponse)
+                bindingStartQuiz.btnResponse4.text = (questResponseList[questNumber].response4)
             } else if (rightPlace == 4) {
-                bindingStartQuiz.btnResponse1.setText(questResponseList.get(questNumber).response2)
-                bindingStartQuiz.btnResponse2.setText(questResponseList.get(questNumber).response3)
-                bindingStartQuiz.btnResponse3.setText(questResponseList.get(questNumber).response4)
-                bindingStartQuiz.btnResponse4.setText(questResponseList.get(questNumber).rightResponse)
+                bindingStartQuiz.btnResponse1.text = (questResponseList[questNumber].response2)
+                bindingStartQuiz.btnResponse2.text = (questResponseList[questNumber].response3)
+                bindingStartQuiz.btnResponse3.text = (questResponseList[questNumber].response4)
+                bindingStartQuiz.btnResponse4.text = (questResponseList[questNumber].rightResponse)
             }
         }
     }
@@ -189,7 +234,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             for (i in 0..2) {
                 if (i == 0) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName2.text = it }
-                    playerMap["bot1"] = bindingStartQuiz.playerIcon2
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon2
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon2.setImageResource(
@@ -197,9 +242,11 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 } else if (i == 1) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName3.text = it }
-                    playerMap["bot2"] = bindingStartQuiz.playerIcon3
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon3
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon3.setImageResource(
@@ -207,9 +254,11 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 } else if (i == 2) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName4.text = it }
-                    playerMap["bot3"] = bindingStartQuiz.playerIcon4
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon4
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon4.setImageResource(
@@ -217,6 +266,8 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 }
             }
         } else if (random == 2) {
@@ -228,7 +279,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             for (i in 0..2) {
                 if (i == 0) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName1.text = it }
-                    playerMap["bot1"] = bindingStartQuiz.playerIcon1
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon1
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon1.setImageResource(
@@ -236,9 +287,11 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 } else if (i == 1) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName3.text = it }
-                    playerMap["bot2"] = bindingStartQuiz.playerIcon3
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon3
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon3.setImageResource(
@@ -246,9 +299,11 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 } else if (i == 2) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName4.text = it }
-                    playerMap["bot3"] = bindingStartQuiz.playerIcon4
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon4
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon4.setImageResource(
@@ -256,6 +311,8 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 }
             }
         } else if (random == 3) {
@@ -267,7 +324,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             for (i in 0..2) {
                 if (i == 0) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName1.text = it }
-                    playerMap["bot1"] = bindingStartQuiz.playerIcon1
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon1
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon1.setImageResource(
@@ -275,9 +332,11 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 } else if (i == 1) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName2.text = it }
-                    playerMap["bot2"] = bindingStartQuiz.playerIcon2
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon2
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon2.setImageResource(
@@ -285,9 +344,11 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 } else if (i == 2) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName4.text = it }
-                    playerMap["bot3"] = bindingStartQuiz.playerIcon4
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon4
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon4.setImageResource(
@@ -295,6 +356,8 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 }
             }
 
@@ -307,7 +370,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             for (i in 0..2) {
                 if (i == 0) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName1.text = it }
-                    playerMap["bot1"] = bindingStartQuiz.playerIcon1
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon1
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon1.setImageResource(
@@ -315,9 +378,11 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 } else if (i == 1) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName2.text = it }
-                    playerMap["bot2"] = bindingStartQuiz.playerIcon2
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon2
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon2.setImageResource(
@@ -325,9 +390,11 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 } else if (i == 2) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName3.text = it }
-                    playerMap["bot3"] = bindingStartQuiz.playerIcon3
+                    playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon3
                     innerArrayImages[i].let {
                         map[it]?.let { it1 ->
                             bindingStartQuiz.playerIcon3.setImageResource(
@@ -335,19 +402,41 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
+                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
+                        botAIEasy, rightPlace))
                 }
             }
         }
 
 
     }
+    fun responseResult(){
+
+    }
+
+    fun checkCountResponse(){
+        countResponse++
+        if(countResponse == 4){
+            responseResult()
+        }
+    }
 
     private fun handlerCreating() {
-        handler1 = object : Handler(Looper.myLooper()!!) {
+        handler = object : Handler(Looper.myLooper()!!) {
             override fun handleMessage(msg: Message) {
+                val botname = msg.data.get("botName")
+                playerMap[botname].let { it?.setBackgroundResource(R.drawable.shadow) }
+                msg.data.clear()
                 when (msg.what) {
-                    1 -> bindingStartQuiz.timer.setText(timeCounter.toString())
-                    2 -> {
+                    0 ->{
+                        bindingStartQuiz.quest.visibility = View.VISIBLE}
+                    1 -> {buttonsVisibility(true)
+                    questionsVisibility(true)
+                        startTimer()}
+                    2 -> bindingStartQuiz.timer.setText(timeCounter.toString())
+
+                    3-> {checkCountResponse()}
+                    20 -> {
                         val dialog = DialogClass(
                             bindingStartQuiz.root.context,
                             "Время вышло",
@@ -363,16 +452,61 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+fun buttonsVisibility(boolean: Boolean){
+    if (boolean) {
+        bindingStartQuiz.btnResponse1.visibility = View.VISIBLE
+        bindingStartQuiz.btnResponse2.visibility = View.VISIBLE
+        bindingStartQuiz.btnResponse3.visibility = View.VISIBLE
+        bindingStartQuiz.btnResponse4.visibility = View.VISIBLE
+    }else{
+        bindingStartQuiz.btnResponse1.visibility = View.INVISIBLE
+        bindingStartQuiz.btnResponse2.visibility = View.INVISIBLE
+        bindingStartQuiz.btnResponse3.visibility = View.INVISIBLE
+        bindingStartQuiz.btnResponse4.visibility = View.INVISIBLE
+    }
+}
+
+    fun questionsVisibility(boolean: Boolean){
+        if (boolean){
+            bindingStartQuiz.questionPlace.visibility = View.VISIBLE
+            bindingStartQuiz.timer.visibility = View.VISIBLE
+            bindingStartQuiz.quest.visibility = View.INVISIBLE
+        }else{
+            bindingStartQuiz.questionPlace.visibility = View.INVISIBLE
+            bindingStartQuiz.timer.visibility = View.INVISIBLE
+            bindingStartQuiz.quest.visibility = View.VISIBLE
+
+        }
+    }
+
 
     fun startTimer() {
-        executorStartQuiz.execute(Runnable {
-            while (timeCounter != 0) {
+        executorStartQuiz.execute {
+            while (timeCounter != 0 || countResponse == 4) {
                 TimeUnit.SECONDS.sleep(1)
                 timeCounter--
-                handler1?.sendEmptyMessage(1)
+                //Посылаем уменьшение секунды на экран
+                handler?.sendEmptyMessage(2)
             }
-            handler1?.sendEmptyMessage(2)
-        })
+        }
+        botThinkThreadStart()// Боты начинают думать когда запускаеться таймер
+    }
+
+    fun botThinkThreadStart(){
+        for (bot in botAIList){
+            executorStartQuiz.execute{
+                TimeUnit.SECONDS.sleep((0..roundTime).random().toLong())
+                bot.botQuestResponse()
+                handler?.sendEmptyMessage(3)
+
+                val message = handler?.obtainMessage()
+                val bundle = Bundle()
+                bundle.putString("botName",bot.name)
+                message?.data = bundle
+                handler?.sendMessage(message!!)
+                }
+            }
+        }
     }
 
     fun setToGreenColor(v: View?) {
@@ -392,5 +526,3 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             v.setBackgroundResource(R.drawable.btn_red_custom)
         }
     }
-
-}

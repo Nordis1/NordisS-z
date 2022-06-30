@@ -29,5 +29,6 @@
 
     StartQuiz
     <string name="PlayerNames">Name</string>
+    <string name="Quest_one">Вопрос 1</string>
 
 </resources>
