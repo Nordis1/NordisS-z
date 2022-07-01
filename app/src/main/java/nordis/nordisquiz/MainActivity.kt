@@ -25,7 +25,7 @@ val questResponseList = ArrayList<QuestionClass>()
 val nameMenList = ArrayList<String>()
 val nameWomenList = ArrayList<String>()
 val numbersOfWomenList = ArrayList<Int>()
-val map = HashMap<String,Int>()
+val avatarIconMap = HashMap<String,Int>()
 private val executor = Executors.newCachedThreadPool();
 private const val TAG = "MainActivity"
 var handlerMain: Handler? = null
@@ -72,7 +72,7 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
                 //binding.profilImage.setBackgroundResource(R.mipmap.user_profile2)
                 binding.profilImage.setBackgroundResource(R.mipmap.user_profile2)
             }else{
-                map[userAvatarNameIs]
+                avatarIconMap[userAvatarNameIs]
                     ?.let { binding.profilImage.setBackgroundResource(it) }
             }
 
@@ -98,43 +98,47 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             binding.button.id -> {
-                binding.button.isEnabled = false
-                binding.progressBar.visibility = View.VISIBLE
-                if (CheckInternetClass().checkInternetAvailable(applicationContext)) {
-                    executor.execute {
-                        TimeUnit.MILLISECONDS.sleep(650)
-                        handlerMain?.sendEmptyMessage(1)//Показываем подключение к серверу
-                        Log.d(TAG, "onClick: Launch connecting to Server")
-                        TimeUnit.MILLISECONDS.sleep(2000)//2 сек подключаемся
-                        for (i in 2..5) {
-                            if (CheckInternetClass().checkInternetAvailable(applicationContext)) {
-                                Log.d(TAG, "onClick: Incrementing Players $i")
-                                handlerMain?.sendEmptyMessage(i)//Сбор игроков
-                                TimeUnit.MILLISECONDS.sleep((500..1500).random().toLong())
-                            } else {
-                                Log.d(TAG, "onClick: No Internet to Incrementing")
-                                handlerMain?.sendEmptyMessage(8)
-                                TimeUnit.MILLISECONDS.sleep(700)
-                                handlerMain?.sendEmptyMessage(9)
-                                return@execute
+                if(executorStartQuiz == null || executorStartQuiz?.isTerminated == true ) {
+                    binding.button.isEnabled = false
+                    binding.progressBar.visibility = View.VISIBLE
+                    if (CheckInternetClass().checkInternetAvailable(applicationContext)) {
+                        executor.execute {
+                            TimeUnit.MILLISECONDS.sleep(650)
+                            handlerMain?.sendEmptyMessage(1)//Показываем подключение к серверу
+                            Log.d(TAG, "onClick: Launch connecting to Server")
+                            TimeUnit.MILLISECONDS.sleep(2000)//2 сек подключаемся
+                            for (i in 2..5) {
+                                if (CheckInternetClass().checkInternetAvailable(applicationContext)) {
+                                    Log.d(TAG, "onClick: Incrementing Players $i")
+                                    handlerMain?.sendEmptyMessage(i)//Сбор игроков
+                                    TimeUnit.MILLISECONDS.sleep((500..1500).random().toLong())
+                                } else {
+                                    Log.d(TAG, "onClick: No Internet to Incrementing")
+                                    handlerMain?.sendEmptyMessage(8)
+                                    TimeUnit.MILLISECONDS.sleep(700)
+                                    handlerMain?.sendEmptyMessage(9)
+                                    return@execute
+                                }
                             }
+                            Log.d(TAG, "onClick: Start game text launch")
+                            handlerMain?.sendEmptyMessage(6)
+                            TimeUnit.MILLISECONDS.sleep(700)
+                            handlerMain?.sendEmptyMessage(7)
                         }
-                        Log.d(TAG, "onClick: Start game text launch")
-                        handlerMain?.sendEmptyMessage(6)
-                        TimeUnit.MILLISECONDS.sleep(700)
-                        handlerMain?.sendEmptyMessage(7)
-                    }
-                } else {
-                    Log.d(TAG, "onClick: If No Connecting")
-                    executor.execute {
-                        TimeUnit.MILLISECONDS.sleep(650)
-                        handlerMain?.sendEmptyMessage(1)
-                        TimeUnit.MILLISECONDS.sleep(2000)
-                        handlerMain?.sendEmptyMessage(8)
-                        TimeUnit.MILLISECONDS.sleep(700)
-                        handlerMain?.sendEmptyMessage(9)
-                    }
+                    } else {
+                        Log.d(TAG, "onClick: If No Connecting")
+                        executor.execute {
+                            TimeUnit.MILLISECONDS.sleep(650)
+                            handlerMain?.sendEmptyMessage(1)
+                            TimeUnit.MILLISECONDS.sleep(2000)
+                            handlerMain?.sendEmptyMessage(8)
+                            TimeUnit.MILLISECONDS.sleep(700)
+                            handlerMain?.sendEmptyMessage(9)
+                        }
 
+                    }
+                }else{
+                    Toast.makeText(applicationContext,getString(R.string.connecting_state_take_a_brake),Toast.LENGTH_LONG).show()
                 }
             }
             binding.profilImage.id->{
@@ -188,6 +192,7 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
                         binding.button.isEnabled = true
                     }
                     10->{
+                        //вызов идёт со StartQuizActivity когда backPressed
                         executor.execute(Runnable {
                             while (executorStartQuiz?.isTerminated != true){
                                 TimeUnit.SECONDS.sleep(1)
@@ -226,57 +231,57 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onDestroy()
     }
     fun imageMapCreating(){
-        map["st"] = R.mipmap.user_profile2
-        map["1"] = R.mipmap.ico1
-        map["2"] = R.mipmap.ico2
-        map["3"] = R.mipmap.ico3
-        map["4"] = R.mipmap.ico4
-        map["5"] = R.mipmap.ico5
-        map["6"] = R.mipmap.ico6
-        map["7"] = R.mipmap.ico7
-        map["8"] = R.mipmap.ico8
-        map["9"] = R.mipmap.ico9
-        map["10"] = R.mipmap.ico10
-        map["11"] = R.mipmap.ico11
-        map["12"] = R.mipmap.ico12
-        map["13"] = R.mipmap.ico13
-        map["14"] = R.mipmap.ico14
-        map["15"] = R.mipmap.ico15
-        map["16"] = R.mipmap.ico16
-        map["17"] = R.mipmap.ico17
-        map["18"] = R.mipmap.ico18
-        map["19"] = R.mipmap.ico19
-        map["20"] = R.mipmap.ico20
-        map["21"] = R.mipmap.ico21
-        map["22"] = R.mipmap.ico22
-        map["23"] = R.mipmap.ico23
-        map["24"] = R.mipmap.ico24
-        map["25"] = R.mipmap.ico25
-        map["26"] = R.mipmap.ico26
-        map["27"] = R.mipmap.ico27
-        map["28"] = R.mipmap.ico28
-        map["29"] = R.mipmap.ico29
-        map["30"] = R.mipmap.ico30
-        map["31"] = R.mipmap.ico31
-        map["32"] = R.mipmap.ico32
-        map["33"] = R.mipmap.ico33
-        map["34"] = R.mipmap.ico34
-        map["35"] = R.mipmap.ico35
-        map["36"] = R.mipmap.ico36
-        map["37"] = R.mipmap.ico37
-        map["38"] = R.mipmap.ico38
-        map["39"] = R.mipmap.ico39
-        map["40"] = R.mipmap.ico40
-        map["41"] = R.mipmap.ico41
-        map["42"] = R.mipmap.ico42
-        map["43"] = R.mipmap.ico43
-        map["44"] = R.mipmap.ico44
-        map["45"] = R.mipmap.ico45
-        map["46"] = R.mipmap.ico46
-        map["47"] = R.mipmap.ico47
-        map["48"] = R.mipmap.ico48
-        map["49"] = R.mipmap.ico49
-        map["50"] = R.mipmap.ico50
+        avatarIconMap["st"] = R.mipmap.user_profile2
+        avatarIconMap["1"] = R.mipmap.ico1
+        avatarIconMap["2"] = R.mipmap.ico2
+        avatarIconMap["3"] = R.mipmap.ico3
+        avatarIconMap["4"] = R.mipmap.ico4
+        avatarIconMap["5"] = R.mipmap.ico5
+        avatarIconMap["6"] = R.mipmap.ico6
+        avatarIconMap["7"] = R.mipmap.ico7
+        avatarIconMap["8"] = R.mipmap.ico8
+        avatarIconMap["9"] = R.mipmap.ico9
+        avatarIconMap["10"] = R.mipmap.ico10
+        avatarIconMap["11"] = R.mipmap.ico11
+        avatarIconMap["12"] = R.mipmap.ico12
+        avatarIconMap["13"] = R.mipmap.ico13
+        avatarIconMap["14"] = R.mipmap.ico14
+        avatarIconMap["15"] = R.mipmap.ico15
+        avatarIconMap["16"] = R.mipmap.ico16
+        avatarIconMap["17"] = R.mipmap.ico17
+        avatarIconMap["18"] = R.mipmap.ico18
+        avatarIconMap["19"] = R.mipmap.ico19
+        avatarIconMap["20"] = R.mipmap.ico20
+        avatarIconMap["21"] = R.mipmap.ico21
+        avatarIconMap["22"] = R.mipmap.ico22
+        avatarIconMap["23"] = R.mipmap.ico23
+        avatarIconMap["24"] = R.mipmap.ico24
+        avatarIconMap["25"] = R.mipmap.ico25
+        avatarIconMap["26"] = R.mipmap.ico26
+        avatarIconMap["27"] = R.mipmap.ico27
+        avatarIconMap["28"] = R.mipmap.ico28
+        avatarIconMap["29"] = R.mipmap.ico29
+        avatarIconMap["30"] = R.mipmap.ico30
+        avatarIconMap["31"] = R.mipmap.ico31
+        avatarIconMap["32"] = R.mipmap.ico32
+        avatarIconMap["33"] = R.mipmap.ico33
+        avatarIconMap["34"] = R.mipmap.ico34
+        avatarIconMap["35"] = R.mipmap.ico35
+        avatarIconMap["36"] = R.mipmap.ico36
+        avatarIconMap["37"] = R.mipmap.ico37
+        avatarIconMap["38"] = R.mipmap.ico38
+        avatarIconMap["39"] = R.mipmap.ico39
+        avatarIconMap["40"] = R.mipmap.ico40
+        avatarIconMap["41"] = R.mipmap.ico41
+        avatarIconMap["42"] = R.mipmap.ico42
+        avatarIconMap["43"] = R.mipmap.ico43
+        avatarIconMap["44"] = R.mipmap.ico44
+        avatarIconMap["45"] = R.mipmap.ico45
+        avatarIconMap["46"] = R.mipmap.ico46
+        avatarIconMap["47"] = R.mipmap.ico47
+        avatarIconMap["48"] = R.mipmap.ico48
+        avatarIconMap["49"] = R.mipmap.ico49
+        avatarIconMap["50"] = R.mipmap.ico50
     }
 
     

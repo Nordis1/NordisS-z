@@ -1,0 +1,3 @@
+avatarIconMap - храняться общие аватарки
+playerReadyIconMap - Храняться выбранные Аватарки в начале игры в playerCreating методе
+botAIList - Храниться вся созданная инфа о ботах

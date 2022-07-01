@@ -11,15 +11,14 @@ class BotAI(
 {
 
     var botBoolAnswer = false
-    var botAnswer = 0
+    var botAnswer = rightPlace!!
 
 
     fun botQuestResponse() {
         (0..100).random().let { if (it <= aI!!){
             botBoolAnswer = true
-            botAnswer = rightPlace!!
         }else{
-            while (botAnswer != rightPlace){
+            while (botAnswer == rightPlace){
                 botAnswer = (1..4).random()
             }
             botBoolAnswer = true

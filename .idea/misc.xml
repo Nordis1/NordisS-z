@@ -17,11 +17,13 @@
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/ic_launcher_background.xml" value="0.22" />
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/redcolor.xml" value="0.225" />
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/shadow.xml" value="0.258" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/shadow_green.xml" value="0.22" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/shadow_red.xml" value="0.22" />
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/drawable/shadow_tume.xml" value="0.22" />
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/activity_create_profile.xml" value="0.3729166666666667" />
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/activity_fragment_transaction.xml" value="0.35885416666666664" />
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/activity_start_quiz.xml" value="0.28804347826086957" />
+        <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/activity_start_quiz.xml" value="0.3729166666666667" />
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/fragment_choose_ava.xml" value="0.3729166666666667" />
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/fragment_user_profile.xml" value="0.25" />
         <entry key="..\:/android projects/NordisQuiz/app/src/main/res/layout/fragment_which_ava.xml" value="0.3729166666666667" />

@@ -64,7 +64,7 @@
         android:background="@drawable/btn_yellow_custom"
         android:text="Button"
         android:textColor="@color/black"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/btnResponse2"
         app:layout_constraintHeight_percent="0.08"
         app:layout_constraintHorizontal_bias="0.5"
@@ -80,7 +80,7 @@
         android:background="@drawable/btn_yellow_custom"
         android:text="Button"
         android:textColor="@color/black"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.08"
         app:layout_constraintHorizontal_bias="0.5"
@@ -96,7 +96,7 @@
         android:background="@drawable/btn_yellow_custom"
         android:text="Button"
         android:textColor="@color/black"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/btnResponse4"
         app:layout_constraintHeight_percent="0.08"
         app:layout_constraintHorizontal_bias="0.5"
@@ -113,7 +113,7 @@
         android:background="@drawable/btn_yellow_custom"
         android:text="Button"
         android:textColor="@color/black"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.08"
         app:layout_constraintHorizontal_bias="0.5"
@@ -234,5 +234,53 @@
         app:layout_constraintEnd_toEndOf="@+id/playerIcon4"
         app:layout_constraintStart_toStartOf="@+id/playerIcon4"
         app:layout_constraintTop_toBottomOf="@+id/playerIcon4" />
+
+    <TextView
+        android:id="@+id/textViewCounter1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="0"
+        android:textColor="@color/yellow2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/btnResponse1"
+        app:layout_constraintStart_toStartOf="@+id/btnResponse1"
+        app:layout_constraintTop_toBottomOf="@+id/btnResponse1" />
+
+    <TextView
+        android:id="@+id/textViewCounter2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="0"
+        android:textColor="@color/yellow2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/btnResponse2"
+        app:layout_constraintStart_toStartOf="@+id/btnResponse2"
+        app:layout_constraintTop_toBottomOf="@+id/btnResponse2" />
+
+    <TextView
+        android:id="@+id/textViewCounter3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="0"
+        android:textColor="@color/yellow2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/btnResponse3"
+        app:layout_constraintStart_toStartOf="@+id/btnResponse3"
+        app:layout_constraintTop_toBottomOf="@+id/btnResponse3" />
+
+    <TextView
+        android:id="@+id/textViewCounter4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="0"
+        android:textColor="@color/yellow2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/btnResponse4"
+        app:layout_constraintStart_toStartOf="@+id/btnResponse4"
+        app:layout_constraintTop_toBottomOf="@+id/btnResponse4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

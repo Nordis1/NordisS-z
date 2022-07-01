@@ -9,6 +9,7 @@
     <string name="connecting_state_2.3">Сбор игроков…4</string>
     <string name="connecting_state_2.4">Нет соединения…</string>
     <string name="connecting_state_3">Старт…</string>
+    <string name="connecting_state_take_a_brake">Сделаем передышку</string>
 
 
     InternetCheck
@@ -30,5 +31,6 @@
     StartQuiz
     <string name="PlayerNames">Name</string>
     <string name="Quest_one">Вопрос 1</string>
+    <string name="Quest_two">Вопрос 2</string>
 
 </resources>

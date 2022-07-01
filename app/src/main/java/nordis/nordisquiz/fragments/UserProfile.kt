@@ -62,7 +62,7 @@ class UserProfile : Fragment(), View.OnClickListener {
             bindingUserProfile.UserMainAvatar.setImageResource(R.mipmap.user_profile2)
             activity?.getSharedPreferences("AVATAR", Context.MODE_PRIVATE)?.edit()?.putString("avatarName","st")?.apply()
         }else{
-            map[userAvatarNameIs]
+            avatarIconMap[userAvatarNameIs]
                 ?.let { bindingUserProfile.UserMainAvatar.setImageResource(it) }
         }
     }
