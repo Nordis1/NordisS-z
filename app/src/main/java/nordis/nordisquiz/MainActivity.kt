@@ -28,7 +28,7 @@ val numbersOfWomenList = ArrayList<Int>()
 val map = HashMap<String,Int>()
 private val executor = Executors.newCachedThreadPool();
 private const val TAG = "MainActivity"
-private var handler: Handler? = null
+var handlerMain: Handler? = null
 
 var userNameIs: String? = null
 var userAvatarNameIs: String? = null
@@ -103,36 +103,36 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
                 if (CheckInternetClass().checkInternetAvailable(applicationContext)) {
                     executor.execute {
                         TimeUnit.MILLISECONDS.sleep(650)
-                        handler?.sendEmptyMessage(1)//Показываем подключение к серверу
+                        handlerMain?.sendEmptyMessage(1)//Показываем подключение к серверу
                         Log.d(TAG, "onClick: Launch connecting to Server")
                         TimeUnit.MILLISECONDS.sleep(2000)//2 сек подключаемся
                         for (i in 2..5) {
                             if (CheckInternetClass().checkInternetAvailable(applicationContext)) {
                                 Log.d(TAG, "onClick: Incrementing Players $i")
-                                handler?.sendEmptyMessage(i)//Сбор игроков
+                                handlerMain?.sendEmptyMessage(i)//Сбор игроков
                                 TimeUnit.MILLISECONDS.sleep((500..1500).random().toLong())
                             } else {
                                 Log.d(TAG, "onClick: No Internet to Incrementing")
-                                handler?.sendEmptyMessage(8)
+                                handlerMain?.sendEmptyMessage(8)
                                 TimeUnit.MILLISECONDS.sleep(700)
-                                handler?.sendEmptyMessage(9)
+                                handlerMain?.sendEmptyMessage(9)
                                 return@execute
                             }
                         }
                         Log.d(TAG, "onClick: Start game text launch")
-                        handler?.sendEmptyMessage(6)
+                        handlerMain?.sendEmptyMessage(6)
                         TimeUnit.MILLISECONDS.sleep(700)
-                        handler?.sendEmptyMessage(7)
+                        handlerMain?.sendEmptyMessage(7)
                     }
                 } else {
                     Log.d(TAG, "onClick: If No Connecting")
                     executor.execute {
                         TimeUnit.MILLISECONDS.sleep(650)
-                        handler?.sendEmptyMessage(1)
+                        handlerMain?.sendEmptyMessage(1)
                         TimeUnit.MILLISECONDS.sleep(2000)
-                        handler?.sendEmptyMessage(8)
+                        handlerMain?.sendEmptyMessage(8)
                         TimeUnit.MILLISECONDS.sleep(700)
-                        handler?.sendEmptyMessage(9)
+                        handlerMain?.sendEmptyMessage(9)
                     }
 
                 }
@@ -148,7 +148,7 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun handlerCreating() {
-        handler = object : Handler(Looper.myLooper()!!) {
+        handlerMain = object : Handler(Looper.myLooper()!!) {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
                     1 -> binding.startConnectingTV.visibility = View.VISIBLE
@@ -165,7 +165,7 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
                     7 -> {
                         if (CheckInternetClass().checkInternetAvailable(applicationContext)) {
                             Log.d(TAG, "handleMessage: start launch the new Activity ")
-                            val intent = Intent(applicationContext, StartQuiz::class.java)
+                            val intent = Intent(applicationContext, StartQuiz()::class.java)
                             startActivity(intent)
                         } else {
                             Toast.makeText(
@@ -187,6 +187,14 @@ open class MainActivity : AppCompatActivity(), View.OnClickListener {
                         binding.startConnectingTV.setText(R.string.connectingToServer)
                         binding.button.isEnabled = true
                     }
+                    10->{
+                        executor.execute(Runnable {
+                            while (executorStartQuiz?.isTerminated != true){
+                                TimeUnit.SECONDS.sleep(1)
+                                Log.d(TAG, "handleMessage: executorStartQuiz is not terminated!")}
+                            Log.d(TAG, "handleMessage: executer is terminated!")
+
+                        }) }
                 }
             }
         }

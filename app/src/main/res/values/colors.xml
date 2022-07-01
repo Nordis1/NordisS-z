@@ -17,5 +17,6 @@
     <color name="red1">#AF3D38</color>
     <color name="yellow">#FFC000</color>
     <color name="yellow2">#C8FFC000</color>
+    <color name="yellow3">#C8AC8100</color>
     <color name="invisible">#00000000</color>
 </resources>

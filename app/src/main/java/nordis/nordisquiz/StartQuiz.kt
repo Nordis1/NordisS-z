@@ -10,28 +10,29 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import nordis.nordisquiz.databinding.ActivityStartQuizBinding
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
 private const val TAG = "StartQuiz"
-private val executorStartQuiz = Executors.newCachedThreadPool();
+var executorStartQuiz: ExecutorService? = null
 val playerMap = HashMap<String, ImageView>()
 val botAIList = ArrayList<BotAI>()
 
 @SuppressLint("StaticFieldLeak")
 private lateinit var bindingStartQuiz: ActivityStartQuizBinding
 
-private var handler: Handler? = null
+private var handlerStartQuiz: Handler? = null
 private var questNumber: Int = -1
 private var rightPlace: Int = -1
-private var timeCounter: Int = 20
+private var timeCounter = 20
 private var botAIEasy = 70
 private var botAINormal = 80
 private var botAIHard = 90
-private var roundTime = 20
 private var countResponse = 0
 
 class StartQuiz : AppCompatActivity(), View.OnClickListener {
@@ -39,41 +40,68 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         bindingStartQuiz = ActivityStartQuizBinding.inflate(layoutInflater)
         setContentView(bindingStartQuiz.root)
+        Log.d(TAG, "onCreate: ")
+        /** На важные глобальные переменные ставим дефолтные значения
+         * так как с прошлого потока могут оставаться старые значения */
+        countResponse = 0
+        timeCounter = 20
+        botAIList.clear()
+        executorStartQuiz = Executors.newCachedThreadPool();
+
         bindingStartQuiz.btnResponse1.setOnClickListener(this)
         bindingStartQuiz.btnResponse2.setOnClickListener(this)
         bindingStartQuiz.btnResponse3.setOnClickListener(this)
         bindingStartQuiz.btnResponse4.setOnClickListener(this)
+
         handlerCreating()
         gameHasStart() // Начинаем игру запуская игроков и объявление вопроса
         questionsPrepare() //тут задаёться вопрос и загружаються варианты ответов
         playerCreating() // тут создаються боты и сам пользователь
 
 
-
     }
 
-    fun gameHasStart(){
-        executorStartQuiz.execute(Runnable {
+    fun gameHasStart() {
+        executorStartQuiz?.execute(Runnable {
             TimeUnit.MILLISECONDS.sleep(1600)
-            handler?.sendEmptyMessage(0)
+            handlerStartQuiz?.sendEmptyMessage(0)
             TimeUnit.MILLISECONDS.sleep(1400)
-            handler?.sendEmptyMessage(1)
+            handlerStartQuiz?.sendEmptyMessage(1)
 
         })
     }
 
+    fun startQuestionShow(boolean: Boolean) {
+        if (boolean) {
+            questionsAndButtonsVisibility(true)
+
+        } else {
+            questionsAndButtonsVisibility(false)
+        }
+    }
+
     @SuppressLint("ResourceAsColor")
     override fun onClick(v: View?) {
-
-        when(v){
-            bindingStartQuiz.btnResponse1->{checkCountResponse()
-            userGaveResponse(bindingStartQuiz.btnResponse1)}
-            bindingStartQuiz.btnResponse2->{checkCountResponse()
-                userGaveResponse(bindingStartQuiz.btnResponse2)}
-            bindingStartQuiz.btnResponse3->{checkCountResponse()
-                userGaveResponse(bindingStartQuiz.btnResponse3)}
-            bindingStartQuiz.btnResponse4->{checkCountResponse()
-                userGaveResponse(bindingStartQuiz.btnResponse4)}
+        /** Ответил Пользователь:
+         * Красим кнопку
+         * Выключаем другие кнопки*/
+        when (v) {
+            bindingStartQuiz.btnResponse1 -> {
+                checkCountResponse()
+                userGaveResponse(bindingStartQuiz.btnResponse1)
+            }
+            bindingStartQuiz.btnResponse2 -> {
+                checkCountResponse()
+                userGaveResponse(bindingStartQuiz.btnResponse2)
+            }
+            bindingStartQuiz.btnResponse3 -> {
+                checkCountResponse()
+                userGaveResponse(bindingStartQuiz.btnResponse3)
+            }
+            bindingStartQuiz.btnResponse4 -> {
+                checkCountResponse()
+                userGaveResponse(bindingStartQuiz.btnResponse4)
+            }
         }
 
 /*        when (rightPlace) {
@@ -112,24 +140,155 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         }*/
 
     }
-    fun userGaveResponse(button: Button){
-        setToYellowColor(button)
-        bindingStartQuiz.btnResponse1.isEnabled  = false
-        bindingStartQuiz.btnResponse2.isEnabled  = false
-        bindingStartQuiz.btnResponse3.isEnabled  = false
-        bindingStartQuiz.btnResponse4.isEnabled  = false
+
+    fun userGaveResponse(button: Button) {
+        playerMap["user"]?.setBackgroundResource(R.drawable.shadow)
+        setToUserGaveChooseColor(button)
+        bindingStartQuiz.btnResponse1.isEnabled = false
+        bindingStartQuiz.btnResponse2.isEnabled = false
+        bindingStartQuiz.btnResponse3.isEnabled = false
+        bindingStartQuiz.btnResponse4.isEnabled = false
     }
 
 
+    fun responseResult() {
+        Toast.makeText(baseContext, "All done!", Toast.LENGTH_LONG).show()
+    }
+
+
+    fun checkCountResponse() {
+        countResponse++
+        Log.d(TAG, "checkCountResponse: $countResponse")
+        if (countResponse == 4) {
+            responseResult()
+        }
+
+    }
+
+
+    private fun handlerCreating() {
+        handlerStartQuiz = object : Handler(Looper.getMainLooper()!!) {
+            @Synchronized
+            override fun handleMessage(msg: Message) {
+                if (!msg.data.isEmpty) {
+                    playerMap[msg.data.get("botName")].let {
+                        it?.setBackgroundResource(R.drawable.shadow)
+                        msg.data.clear()
+                        Log.d(TAG, "handleMessage: Зашли боту дать фон рамки")
+                    }
+                } else {
+                    when (msg.what) {
+                        0 -> {
+                            Log.d(
+                                TAG,
+                                "handleMessage: зашли что бы сделать объявление вопроса видимым"
+                            )
+                            bindingStartQuiz.quest.visibility = View.VISIBLE
+                        }
+                        1 -> {
+                            Log.d(
+                                TAG,
+                                "handleMessage: Защшли что бы сделать сам вопрос видимым и запустить таймер"
+                            )
+                            startQuestionShow(true)
+                            startTimer()
+                        }
+                        2 -> bindingStartQuiz.timer.setText(timeCounter.toString())
+
+                        3 -> {
+                            checkCountResponse()
+                        }
+                        4 -> responseResult()
+                        20 -> {
+                            val dialog = DialogClass(
+                                bindingStartQuiz.root.context,
+                                "Время вышло",
+                                "Вы не ответили на вопрос во время!",
+                                null,
+                                null
+                            )
+                            dialog.standartDialogMessage()
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun startTimer() {
+        Log.d(TAG, "startTimer: $timeCounter")
+        Log.d(TAG, "startTimer: $countResponse")
+        executorStartQuiz?.execute(Runnable {
+
+            run timerWhile@{
+                while (timeCounter != 0) {
+                    if (timeCounter <= 0 || countResponse == 4) {
+                        return@Runnable
+                    }
+                    //Посылаем уменьшение секунды на экран
+                    handlerStartQuiz?.sendEmptyMessage(2)
+                    timeCounter--
+                    TimeUnit.SECONDS.sleep(1)
+                }
+            }
+
+        })
+        botThinkThreadStart()// Боты начинают думать когда запускаеться таймер
+    }
+
+
+    fun questionsAndButtonsVisibility(boolean: Boolean) {
+        if (boolean) {
+            bindingStartQuiz.btnResponse1.visibility = View.VISIBLE
+            bindingStartQuiz.btnResponse2.visibility = View.VISIBLE
+            bindingStartQuiz.btnResponse3.visibility = View.VISIBLE
+            bindingStartQuiz.btnResponse4.visibility = View.VISIBLE
+            bindingStartQuiz.quest.visibility = View.INVISIBLE
+            bindingStartQuiz.questionPlace.visibility = View.VISIBLE
+            bindingStartQuiz.timer.visibility = View.VISIBLE
+        } else {
+            bindingStartQuiz.btnResponse1.visibility = View.GONE
+            bindingStartQuiz.btnResponse2.visibility = View.GONE
+            bindingStartQuiz.btnResponse3.visibility = View.GONE
+            bindingStartQuiz.btnResponse4.visibility = View.GONE
+            bindingStartQuiz.questionPlace.visibility = View.INVISIBLE
+            bindingStartQuiz.timer.visibility = View.INVISIBLE
+            bindingStartQuiz.quest.visibility = View.VISIBLE
+
+        }
+    }
+
+
+    fun botThinkThreadStart() {
+        for (bot in botAIList) {
+            executorStartQuiz?.execute(Runnable {
+                try {
+                    TimeUnit.SECONDS.sleep((4 until 19).random().toLong())
+                    bot.botQuestResponse()
+                    handlerStartQuiz?.sendEmptyMessage(3)
+
+                    val message = handlerStartQuiz?.obtainMessage()
+                    val bundle = Bundle()
+                    bundle.putString("botName", bot.name)
+                    message?.data = bundle
+                    handlerStartQuiz?.sendMessage(message!!)
+                } catch (e: Exception) {
+
+                }
+            })
+        }
+    }
+
     fun questionsPrepare() {
         if (questResponseList.size != 0) {
-            if (questResponseList.isEmpty()){
+            if (questResponseList.isEmpty()) {
                 this.onBackPressed()
             }
-            if (questNumber == -1){
+            if (questNumber == -1) {
                 rightPlace = (1..4).random()
                 questNumber = (0 until questResponseList.size).random()
-            }else{
+            } else {
                 questResponseList.removeAt(questNumber)
                 rightPlace = (1..4).random()
                 questNumber = (0 until questResponseList.size).random()
@@ -181,17 +340,21 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                         }
                         /**Теперь создаём картинку мужику*/
 
-                            val count1 = innerArrayImages.size
-                            while (count1 == innerArrayImages.size) {
-                                (1..50).random().let {
-                                    /** Если женский список не содержит этого номера то пихаем*/
-                                    if (!numbersOfWomenList.contains(it) && !innerArrayImages.contains(it.toString())) {
-                                        innerArrayImages.add(it.toString())
-                                        Log.d(TAG, "playerCreating: Создали Мужскую иконку $it"
-                                        )
-                                    }
+                        val count1 = innerArrayImages.size
+                        while (count1 == innerArrayImages.size) {
+                            (1..50).random().let {
+                                /** Если женский список не содержит этого номера то пихаем*/
+                                if (!numbersOfWomenList.contains(it) && !innerArrayImages.contains(
+                                        it.toString()
+                                    )
+                                ) {
+                                    innerArrayImages.add(it.toString())
+                                    Log.d(
+                                        TAG, "playerCreating: Создали Мужскую иконку $it"
+                                    )
                                 }
                             }
+                        }
 
                     } else {
                         /** Создаём женщину */
@@ -207,9 +370,10 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                         while (count2 == innerArrayImages.size) {
                             (1..50).random().let {
                                 /** Если женский список содержит этого номера то пихаем*/
-                                if (numbersOfWomenList.contains(it) && !innerArrayImages.contains(it.toString()) ) {
+                                if (numbersOfWomenList.contains(it) && !innerArrayImages.contains(it.toString())) {
                                     innerArrayImages.add(it.toString())
-                                    Log.d(TAG, "playerCreating: Создали Женскую иконку $it"
+                                    Log.d(
+                                        TAG, "playerCreating: Создали Женскую иконку $it"
                                     )
                                 }
                             }
@@ -242,8 +406,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 } else if (i == 1) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName3.text = it }
                     playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon3
@@ -254,8 +422,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 } else if (i == 2) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName4.text = it }
                     playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon4
@@ -266,8 +438,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 }
             }
         } else if (random == 2) {
@@ -287,8 +463,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 } else if (i == 1) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName3.text = it }
                     playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon3
@@ -299,8 +479,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 } else if (i == 2) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName4.text = it }
                     playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon4
@@ -311,8 +495,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 }
             }
         } else if (random == 3) {
@@ -332,8 +520,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 } else if (i == 1) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName2.text = it }
                     playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon2
@@ -344,8 +536,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 } else if (i == 2) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName4.text = it }
                     playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon4
@@ -356,8 +552,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 }
             }
 
@@ -378,8 +578,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 } else if (i == 1) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName2.text = it }
                     playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon2
@@ -390,8 +594,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
+                        )
+                    )
                 } else if (i == 2) {
                     innerArrayNames[i].let { bindingStartQuiz.playerName3.text = it }
                     playerMap[innerArrayNames[i]] = bindingStartQuiz.playerIcon3
@@ -402,127 +610,74 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                     }
-                    botAIList.add(BotAI(innerArrayNames[i],bindingStartQuiz.playerIcon2,
-                        botAIEasy, rightPlace))
-                }
-            }
-        }
-
-
-    }
-    fun responseResult(){
-
-    }
-
-    fun checkCountResponse(){
-        countResponse++
-        if(countResponse == 4){
-            responseResult()
-        }
-    }
-
-    private fun handlerCreating() {
-        handler = object : Handler(Looper.myLooper()!!) {
-            override fun handleMessage(msg: Message) {
-                val botname = msg.data.get("botName")
-                playerMap[botname].let { it?.setBackgroundResource(R.drawable.shadow) }
-                msg.data.clear()
-                when (msg.what) {
-                    0 ->{
-                        bindingStartQuiz.quest.visibility = View.VISIBLE}
-                    1 -> {buttonsVisibility(true)
-                    questionsVisibility(true)
-                        startTimer()}
-                    2 -> bindingStartQuiz.timer.setText(timeCounter.toString())
-
-                    3-> {checkCountResponse()}
-                    20 -> {
-                        val dialog = DialogClass(
-                            bindingStartQuiz.root.context,
-                            "Время вышло",
-                            "Вы не ответили на вопрос во время!",
-                            null,
-                            null
+                    botAIList.add(
+                        BotAI(
+                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
+                            botAIEasy, rightPlace
                         )
-                        dialog.standartDialogMessage()
-
-                    }
+                    )
                 }
             }
         }
+
+
     }
 
-fun buttonsVisibility(boolean: Boolean){
-    if (boolean) {
-        bindingStartQuiz.btnResponse1.visibility = View.VISIBLE
-        bindingStartQuiz.btnResponse2.visibility = View.VISIBLE
-        bindingStartQuiz.btnResponse3.visibility = View.VISIBLE
-        bindingStartQuiz.btnResponse4.visibility = View.VISIBLE
-    }else{
-        bindingStartQuiz.btnResponse1.visibility = View.INVISIBLE
-        bindingStartQuiz.btnResponse2.visibility = View.INVISIBLE
-        bindingStartQuiz.btnResponse3.visibility = View.INVISIBLE
-        bindingStartQuiz.btnResponse4.visibility = View.INVISIBLE
-    }
-}
+    override fun onDestroy() {
+        handlerStartQuiz?.sendEmptyMessage(10)
+        super.onDestroy()
+        Log.d(TAG, "onDestroy:")
+        //executorStartQuiz?.shutdownNow()
+        /*    countResponse = 0
+            timeCounter = 20*/
 
-    fun questionsVisibility(boolean: Boolean){
-        if (boolean){
-            bindingStartQuiz.questionPlace.visibility = View.VISIBLE
-            bindingStartQuiz.timer.visibility = View.VISIBLE
-            bindingStartQuiz.quest.visibility = View.INVISIBLE
-        }else{
-            bindingStartQuiz.questionPlace.visibility = View.INVISIBLE
-            bindingStartQuiz.timer.visibility = View.INVISIBLE
-            bindingStartQuiz.quest.visibility = View.VISIBLE
-
-        }
     }
 
-
-    fun startTimer() {
-        executorStartQuiz.execute {
-            while (timeCounter != 0 || countResponse == 4) {
-                TimeUnit.SECONDS.sleep(1)
-                timeCounter--
-                //Посылаем уменьшение секунды на экран
-                handler?.sendEmptyMessage(2)
-            }
-        }
-        botThinkThreadStart()// Боты начинают думать когда запускаеться таймер
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause: ")
     }
 
-    fun botThinkThreadStart(){
-        for (bot in botAIList){
-            executorStartQuiz.execute{
-                TimeUnit.SECONDS.sleep((0..roundTime).random().toLong())
-                bot.botQuestResponse()
-                handler?.sendEmptyMessage(3)
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: ")
+    }
 
-                val message = handler?.obtainMessage()
-                val bundle = Bundle()
-                bundle.putString("botName",bot.name)
-                message?.data = bundle
-                handler?.sendMessage(message!!)
-                }
-            }
-        }
+    override fun onRestart() {
+        super.onRestart()
+        Log.d(TAG, "onRestart: ")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume: ")
+    }
+
+    override fun onBackPressed() {
+        executorStartQuiz?.shutdown()
+        super.onBackPressed()
+        Log.d(TAG, "onBackPressed: ")
+    }
+
+
+    fun setToUserGaveChooseColor(v: View?) {
+        v?.setBackgroundResource(R.drawable.btn_yellow_tume_custom)
     }
 
     fun setToGreenColor(v: View?) {
-        if (v != null) {
-            v.setBackgroundResource(R.drawable.btn_custom_green)
-        }
+        v?.setBackgroundResource(R.drawable.btn_custom_green)
     }
 
     fun setToYellowColor(v: View?) {
-        if (v != null) {
-            v.setBackgroundResource(R.drawable.btn_yellow_custom)
-        }
+        v?.setBackgroundResource(R.drawable.btn_yellow_custom)
     }
 
     fun setToRedColor(v: View?) {
-        if (v != null) {
-            v.setBackgroundResource(R.drawable.btn_red_custom)
-        }
+        v?.setBackgroundResource(R.drawable.btn_red_custom)
+
     }
+}
+
+
+
+

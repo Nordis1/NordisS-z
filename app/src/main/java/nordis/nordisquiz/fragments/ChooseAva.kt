@@ -125,6 +125,7 @@ class ChooseAva : Fragment(), View.OnClickListener {
             bindingChooseAva.btn35.tag -> {creatingRaamka(v as ImageButton)}
             bindingChooseAva.btn36.tag -> {creatingRaamka(v as ImageButton)}
             bindingChooseAva.btn37.tag -> {creatingRaamka(v as ImageButton)}
+            bindingChooseAva.btn38.tag -> {creatingRaamka(v as ImageButton)}
             bindingChooseAva.btn39.tag -> {creatingRaamka(v as ImageButton)}
             bindingChooseAva.btn40.tag -> {creatingRaamka(v as ImageButton)}
             bindingChooseAva.btn41.tag -> {creatingRaamka(v as ImageButton)}
