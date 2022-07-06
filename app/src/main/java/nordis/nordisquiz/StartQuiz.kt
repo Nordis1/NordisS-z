@@ -2,6 +2,7 @@ package nordis.nordisquiz
 
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import nordis.nordisquiz.databinding.ActivityStartQuizBinding
 import java.util.concurrent.ExecutorService
@@ -32,6 +34,12 @@ private var rightPlace: Int = -1
 private var timeCounter = 20
 private var countResponse = 0
 private var mainUserResponse: Int = 0
+private var mainUserWinCounter: Int = 0
+private var mainUserBoolAnswer: Boolean = false
+
+@SuppressLint("StaticFieldLeak")
+private var mainUserWindow: TextView? = null
+
 
 private val setHandler_QwestCountNotification_0 = 0
 private val setHandler_showQwest_andLuanch_Timer_1 = 1
@@ -39,7 +47,11 @@ private val setHandler_timerDownGrade_2 = 2
 private val setHandler_checkCountRespose_3 = 3
 private val setHandler_responseResult_4 = 4
 private val setHandler_showCountion_of_votes_5 = 5
-private val setHandler_removeQwest_and_Timer_6 = 6
+private val setHandler_showPlayersCountWindows_6 = 6
+private val setHandler_chargeCounts_7 = 7
+private val setHandler_returnTextSizeBack_8 = 8
+private val setHandler_removePlayerIfLose_9 = 9
+private val setHandler_removeQwest_and_Timer_10 = 10
 
 
 class StartQuiz : AppCompatActivity(), View.OnClickListener {
@@ -68,7 +80,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    fun gameHasStart() {
+    private fun gameHasStart() {
         executorStartQuiz?.execute(Runnable {
             TimeUnit.MILLISECONDS.sleep(1600)
             handlerStartQuiz?.sendEmptyMessage(setHandler_QwestCountNotification_0)
@@ -77,7 +89,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    fun startQuestionShow(boolean: Boolean) {
+    private fun startQuestionShow(boolean: Boolean) {
         if (boolean) {
             questionsAndButtonsVisibility(true)
 
@@ -115,7 +127,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun userGaveResponse(button: Button) {
+    private fun userGaveResponse(button: Button) {
         playerReadyIconMap["user"]?.setBackgroundResource(R.drawable.shadow)
         setToUserGaveChooseColor(button)
         bindingStartQuiz.btnResponse1.isEnabled = false
@@ -125,7 +137,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    fun responseResult() {
+    private fun responseResult() {
         /** Когда все игроки дали свой ответ тогда заходим сюда
          * и начинаем окрашивать иконки в правильный и неправильные цвета
          * заодно и саму кнопку правильного ответа.*/
@@ -146,44 +158,80 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                 setToGreenColor(bindingStartQuiz.btnResponse1)
                 if (mainUserResponse == 1) {
                     playerReadyIconMap["user"]?.setBackgroundResource(R.drawable.shadow_green)
+                    mainUserBoolAnswer = true
                 } else {
                     playerReadyIconMap["user"]?.setBackgroundResource(R.drawable.shadow_red)
+                    mainUserBoolAnswer = false
+
                 }
             }
             2 -> {
                 setToGreenColor(bindingStartQuiz.btnResponse2)
                 if (mainUserResponse == 2) {
                     playerReadyIconMap["user"]?.setBackgroundResource(R.drawable.shadow_green)
+                    mainUserBoolAnswer = true
+
                 } else {
                     playerReadyIconMap["user"]?.setBackgroundResource(R.drawable.shadow_red)
+                    mainUserBoolAnswer = false
+
                 }
             }
             3 -> {
                 setToGreenColor(bindingStartQuiz.btnResponse3)
                 if (mainUserResponse == 3) {
                     playerReadyIconMap["user"]?.setBackgroundResource(R.drawable.shadow_green)
+                    mainUserBoolAnswer = true
+
                 } else {
                     playerReadyIconMap["user"]?.setBackgroundResource(R.drawable.shadow_red)
+                    mainUserBoolAnswer = false
+
                 }
             }
             4 -> {
                 setToGreenColor(bindingStartQuiz.btnResponse4)
                 if (mainUserResponse == 4) {
                     playerReadyIconMap["user"]?.setBackgroundResource(R.drawable.shadow_green)
+                    mainUserBoolAnswer = true
+
                 } else {
                     playerReadyIconMap["user"]?.setBackgroundResource(R.drawable.shadow_red)
+                    mainUserBoolAnswer = false
+
                 }
             }
         }
         if (!isDestroyed) {
             executorStartQuiz?.execute {
-                TimeUnit.MILLISECONDS.sleep(600)
+                TimeUnit.MILLISECONDS.sleep(800)
+
+                /** Вызываем подсчёт голосов*/
                 handlerStartQuiz?.sendEmptyMessage(setHandler_showCountion_of_votes_5)
+                TimeUnit.MILLISECONDS.sleep(1400)
+
+                /** Показываем ячейки с правильными ответами те что рядом с иконками игроков */
+                handlerStartQuiz?.sendEmptyMessage(setHandler_showPlayersCountWindows_6)
+                TimeUnit.MILLISECONDS.sleep(500)
+
+                /** Начисляем данные ячеек согласно правильным ответам  и немного увеличиваем их */
+                handlerStartQuiz?.sendEmptyMessage(setHandler_chargeCounts_7)
+                TimeUnit.MILLISECONDS.sleep(250)
+
+                /** Возвращаем в исходное положение  размер шрифта */
+                handlerStartQuiz?.sendEmptyMessage(setHandler_returnTextSizeBack_8)
+                TimeUnit.MILLISECONDS.sleep(500)
+
+                /** Убираем проигравших игроков если таковые имеються */
+                handlerStartQuiz?.sendEmptyMessage(setHandler_removePlayerIfLose_9)
+                TimeUnit.MILLISECONDS.sleep(1700)
+
+                //handlerStartQuiz?.sendEmptyMessage(setHandler_removeQwest_and_Timer_10)
             }
         }
     }
 
-    fun counterVotes() {
+    private fun counterVotes() {
         /** Создаём переменные */
         var answer1 = 0
         var answer2 = 0
@@ -228,7 +276,6 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         Log.d(TAG, "counterVotes: noAnswer: $noAnswer")
 
 
-
         /** Делаем тексты видимыми*/
         showCounterView(true)
 
@@ -240,20 +287,275 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         bindingStartQuiz.textViewCounter4.text = answer4.toString()
 
 
-
-/*
-        if (!isDestroyed) {
-            executorStartQuiz?.execute {
-                TimeUnit.MILLISECONDS.sleep(2500)
-                handlerStartQuiz?.sendEmptyMessage(setHandler_removeQwest_and_Timer_6)
-            }
-        }
-*/
-
-
     }
 
-    fun showCounterView(boolean: Boolean) {
+    private fun removePlayerIfLose() {
+        Log.d(TAG, "removePlayerIfLose: зашли в метод кого убрать из за ошибки")
+        val mapWhoDidMistake = HashMap<String, Int>()
+        val mapWhoDidNotMistake = HashMap<String, Int>()
+        val allPlayersCount = botAIList.count()
+        allPlayersCount.plus(1)
+
+
+        /** Считываем кто дал неправильный ответ и его заработанные очки пихаем в мапу*/
+        for (item in botAIList) {
+            if (!item.botBoolAnswer) {
+                /** Добавляем всех с неправильными ответами в мапу*/
+                mapWhoDidMistake[item.name.toString()] = item.botWinCounter
+            } else {
+                mapWhoDidNotMistake[item.name.toString()] = item.botWinCounter
+            }
+        }
+        if (!mainUserBoolAnswer) {
+            mapWhoDidMistake["user"] = mainUserWinCounter
+        } else {
+            mapWhoDidNotMistake["user"] = mainUserWinCounter
+        }
+
+        /** Отсортировываем нашу мапу по нарастанию */
+        val whoDidMistakesSortedMap = mapWhoDidMistake.toList()
+            .sortedBy { (key, value) -> value }
+            .toMap()
+
+
+
+        if (mapWhoDidMistake.isEmpty()) {
+            gameContinue("ошибок никто не сделал, продолжаем игру!")
+        } else if (mapWhoDidMistake.size == allPlayersCount) {
+            /** тогда повезло все сделали ошибку и никто не вылетает*/
+        } else {
+            when (mapWhoDidMistake.size) {
+                1 -> {
+                    Log.d(TAG, "removePlayerIfLose: была совершена одна ошибка")
+                    if (allPlayersCount == 2) {
+                        Log.d(TAG, "removePlayerIfLose: всего осталось в игре 2 игрока")
+                        if (whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[0].first].toString() == "user") {
+                            mainUserGameOver()
+                        } else {
+                            Log.d(
+                                TAG,
+                                "removePlayerIfLose: ошибка была бота, Пользователь одержал победу!"
+                            )
+                            botGameOver(whoDidMistakesSortedMap, 0)
+                            /** ВАЖНО! Тогда после того как убрали последнего бота игрок должен победить */
+                        }
+                    } else {
+                        Log.d(TAG, "removePlayerIfLose: в игре ещё много игроков")
+                        /** Если игроков больше чем двое и ошибку сделал только один игрок тогда -> */
+                        if (isMistakeCritical(
+                                mapWhoDidMistake.toList()[0].second,
+                                mapWhoDidNotMistake
+                            )
+                        ) {
+                            Log.d(
+                                TAG,
+                                "removePlayerIfLose: ошибка критична, так как у ошибившився самое маленькое значение правильных ответов"
+                            )
+                            /** Если у кого то кто не сделал ошибку в этом раунде правильных ответов меньше чем тот кто ошибился
+                             * тогда ошибка не критична */
+                            if (whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[0].first].toString() == "user") {
+                                mainUserGameOver()
+                            } else {
+                                botGameOver(whoDidMistakesSortedMap, 0)
+                            }
+
+                        } else {
+                            gameContinue("ошибка не критична игра продолжаеться")
+                            /** ошибка не критична игра продолжаеться */
+                        }
+                    }
+                }
+                2 -> {
+                    Log.d(TAG, "removePlayerIfLose: было совершено две ошибки")
+                    whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[0].first]?.compareTo(
+                        whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[1].first]!!
+                    )
+                        .let {
+                            when (it) {
+                                -1 -> {
+                                    /** выгоняем его*/
+                                    if (whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[0].first].toString() == "user") {
+                                        mainUserGameOver()
+                                    } else {
+                                        botGameOver(whoDidMistakesSortedMap, 0)
+                                    }
+                                }
+                                else -> {
+                                    /** Повезло Равные значения*/
+                                    gameContinue("2 сразу не могут вылететь игра продолжаеться")
+                                }
+                            }
+                        }
+                }
+                3 -> {
+                    Log.d(TAG, "removePlayerIfLose: было совершено три ошибки")
+                    whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[0].first]?.compareTo(
+                        whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[2].first]!!
+                    )
+                        .let { it1 ->
+                            when (it1) {
+                                -1 -> {
+                                    /** первое значение меньше, значит сравниваем его со вторым что бы решить выгнать ли игрока*/
+                                    whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[0].first]?.compareTo(
+                                        whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[1].first]!!
+                                    )
+                                        .let {
+                                            when (it) {
+                                                -1 -> {
+                                                    /** выгоняем его*/
+                                                    if (isMainUser(whoDidMistakesSortedMap)) {
+                                                        mainUserGameOver()
+                                                    } else {
+                                                        botGameOver(whoDidMistakesSortedMap, 0)
+                                                    }
+                                                }
+                                                1 -> {
+                                                    /** выгоняем его*/
+                                                    if (isMainUser(whoDidMistakesSortedMap)) {
+                                                        mainUserGameOver()
+                                                    } else {
+                                                        botGameOver(whoDidMistakesSortedMap, 1)
+                                                    }
+                                                }
+                                                else -> {
+                                                    gameContinue("2 сразу не могут вылететь игра продолжаеться")
+                                                    /** Значит значения равные никто не вылетает так как 2 сразу вылететь не могут */
+                                                }
+                                            }
+                                        }
+                                }
+
+                                else -> {
+                                    gameContinue("3 сразу не могут вылететь игра продолжаеться")
+                                    /** Значит значения одинаковые и вылетать некому!
+                                     * а больше оно быть не может так как лист отсортирован от меньшего к большему*/
+
+                                }
+                            }
+                        }
+                }
+                4 -> {
+                    Log.d(TAG, "removePlayerIfLose: была совершено четыре ошибки")
+                    whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[0].first]?.compareTo(
+                        whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[3].first]!!
+                    )
+                        .let { it1 ->
+                            when (it1) {
+                                -1 -> {
+                                    /** первое значение меньше, значит сравниваем его со вторым что бы решить выгнать ли игрока*/
+                                    whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[0].first]?.compareTo(
+                                        whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[2].first]!!
+                                    )
+                                        .let { it2 ->
+                                            when (it2) {
+                                                -1 -> {
+                                                    /** первое значение меньше, значит сравниваем его со вторым что бы решить выгнать ли игрока*/
+                                                    whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[0].first]?.compareTo(
+                                                        whoDidMistakesSortedMap[whoDidMistakesSortedMap.toList()[1].first]!!
+                                                    )
+                                                        .let {
+                                                            when (it) {
+                                                                -1 -> {
+                                                                    /** выгоняем его*/
+                                                                    if (isMainUser(
+                                                                            whoDidMistakesSortedMap
+                                                                        )
+                                                                    ) {
+                                                                        mainUserGameOver()
+                                                                    } else {
+                                                                        botGameOver(
+                                                                            whoDidMistakesSortedMap,
+                                                                            0
+                                                                        )
+                                                                    }
+                                                                }
+                                                                else -> {
+                                                                    gameContinue("2 сразу не могут вылететь игра продолжаеться")
+                                                                    /** Значит значения равные никто не вылетает так как 2 сразу вылететь не могут */
+                                                                }
+                                                            }
+                                                        }
+                                                }
+                                                else -> {
+                                                    gameContinue("3 сразу не могут вылететь игра продолжаеться")
+                                                    /** Значит значения равные никто не вылетает так как 2 сразу вылететь не могут */
+                                                }
+                                            }
+                                        }
+                                }
+
+                                else -> {
+                                    gameContinue("4 сразу не могут вылететь игра продолжаеться")
+                                    /** Значит значения одинаковые и вылетать некому!
+                                     * а больше оно быть не может так как лист отсортирован от меньшего к большему*/
+
+                                }
+                            }
+                        }
+                }
+            }
+
+
+        }
+    }
+
+    private fun gameContinue(string: String) {
+        Log.d(TAG, "gameContinue: $string")
+    }
+
+    private fun isMistakeCritical(int: Int, whoDidNotMap: Map<String, Int>): Boolean {
+
+        for (itemWhoDidNot in whoDidNotMap) {
+            if (itemWhoDidNot.value < int) {
+                //не критично
+                return false
+            }
+        }
+        //ошибка кричина тогда тру
+        return true
+    }
+
+    private fun isMainUser(sortMap: Map<String, Int>): Boolean {
+
+        sortMap.iterator()?.let {
+            while (it.hasNext()) {
+                val item = it.next()
+                if (item.key.equals("user")) {
+                    return true
+                }
+
+            }
+        }
+        return false
+    }
+
+    private fun botGameOver(sortMap: Map<String, Int>, intElementInList: Int) {
+        Log.d(TAG, "botGameOver: ошибка была бота, убираем его")
+        botAIList.iterator().let {
+            while (it.hasNext()) {
+                val item = it.next()
+                if (item.name == sortMap.toList()[intElementInList].first) {
+                    removePlayer(item)
+                    it.remove()
+                }
+            }
+        }
+    }
+
+    private fun mainUserGameOver() {
+        Log.d(TAG, "mainUserGameOver:  ошибка была главного пользователя игра окончена!")
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK;
+        startActivity(intent);
+    }
+
+    private fun removePlayer(item: BotAI) {
+        item.icon?.visibility = View.GONE
+        item.botNameTV?.visibility = View.GONE
+        item.botResponseTV?.visibility = View.GONE
+    }
+
+    private fun showCounterView(boolean: Boolean) {
         if (boolean) {
             bindingStartQuiz.textViewCounter1.visibility = View.VISIBLE
             bindingStartQuiz.textViewCounter2.visibility = View.VISIBLE
@@ -268,7 +570,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    fun checkCountResponse() {
+    private fun checkCountResponse() {
         countResponse++
         Log.d(TAG, "checkCountResponse: countResponse is:  $countResponse")
         if (countResponse == 4) {
@@ -302,11 +604,17 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                             startQuestionShow(true)
                             startTimer()
                         }
-                        setHandler_timerDownGrade_2 -> bindingStartQuiz.timer.setText(timeCounter.toString())
+                        setHandler_timerDownGrade_2 -> bindingStartQuiz.timer.setText(
+                            timeCounter.toString()
+                        )
                         setHandler_checkCountRespose_3 -> checkCountResponse()
                         setHandler_responseResult_4 -> responseResult()
                         setHandler_showCountion_of_votes_5 -> counterVotes()
-                        setHandler_removeQwest_and_Timer_6 -> {
+                        setHandler_showPlayersCountWindows_6 -> showPlayersCountsWindows(true)
+                        setHandler_chargeCounts_7 -> handlePlayerCount()
+                        setHandler_returnTextSizeBack_8 -> returnSizeBack()
+                        setHandler_removePlayerIfLose_9 -> removePlayerIfLose()
+                        setHandler_removeQwest_and_Timer_10 -> {
                             bindingStartQuiz.quest.text = getString(R.string.Quest_two)
                             startQuestionShow(false)
                             showCounterView(false)
@@ -329,7 +637,56 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun startTimer() {
+    private fun returnSizeBack() {
+        for (item in botAIList) {
+            item.botResponseTV?.textSize = 16F
+        }
+
+        mainUserWindow?.textSize = 16F
+
+    }
+
+    private fun showPlayersCountsWindows(boolean: Boolean) {
+        if (boolean) {
+
+            bindingStartQuiz.player1win.visibility = View.VISIBLE
+            bindingStartQuiz.player2win.visibility = View.VISIBLE
+            bindingStartQuiz.player3win.visibility = View.VISIBLE
+            bindingStartQuiz.player4win.visibility = View.VISIBLE
+        } else {
+            bindingStartQuiz.player1win.visibility = View.INVISIBLE
+            bindingStartQuiz.player2win.visibility = View.INVISIBLE
+            bindingStartQuiz.player3win.visibility = View.INVISIBLE
+            bindingStartQuiz.player4win.visibility = View.INVISIBLE
+
+        }
+    }
+
+    private fun handlePlayerCount() {
+        for (item in botAIList) {
+            if (item.botAnswer == rightPlace) {
+                var count1 = 0
+                item.botResponseTV?.text.toString().toInt().let {
+                    count1 = it
+                    count1++
+                    item.botResponseTV?.text = count1.toString()
+                    item.botResponseTV?.textSize = 18F
+                    item.botWinCounter++
+
+                }
+
+            }
+        }
+        if (mainUserResponse == rightPlace) {
+            var count2 = mainUserWindow?.text.toString().toInt()
+            count2++
+            mainUserWindow?.text = count2.toString()
+            mainUserWindow?.textSize = 18F
+            mainUserWinCounter++
+        }
+    }
+
+    private fun startTimer() {
         Log.d(TAG, "startTimer: $timeCounter")
         Log.d(TAG, "startTimer: $countResponse")
         executorStartQuiz?.execute(Runnable {
@@ -355,7 +712,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    fun questionsAndButtonsVisibility(boolean: Boolean) {
+    private fun questionsAndButtonsVisibility(boolean: Boolean) {
         if (boolean) {
             /** Кнопки показать  да\нет  таймер и квест */
             bindingStartQuiz.btnResponse1.visibility = View.VISIBLE
@@ -378,7 +735,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    fun botThinkThreadStart() {
+    private fun botThinkThreadStart() {
         for (bot in botAIList) {
             executorStartQuiz?.execute(Runnable {
                 try {
@@ -398,7 +755,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun questionsPrepare() {
+    private fun questionsPrepare() {
         if (questResponseList.size != 0) {
             if (questResponseList.isEmpty()) {
                 this.onBackPressed()
@@ -414,30 +771,34 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
 
             bindingStartQuiz.questionPlace.text = questResponseList[questNumber].question
             if (rightPlace == 1) {
-                bindingStartQuiz.btnResponse1.text = (questResponseList[questNumber].rightResponse)
+                bindingStartQuiz.btnResponse1.text =
+                    (questResponseList[questNumber].rightResponse)
                 bindingStartQuiz.btnResponse2.text = (questResponseList[questNumber].response2)
                 bindingStartQuiz.btnResponse3.text = (questResponseList[questNumber].response3)
                 bindingStartQuiz.btnResponse4.text = (questResponseList[questNumber].response4)
             } else if (rightPlace == 2) {
                 bindingStartQuiz.btnResponse1.text = (questResponseList[questNumber].response2)
-                bindingStartQuiz.btnResponse2.text = (questResponseList[questNumber].rightResponse)
+                bindingStartQuiz.btnResponse2.text =
+                    (questResponseList[questNumber].rightResponse)
                 bindingStartQuiz.btnResponse3.text = (questResponseList[questNumber].response3)
                 bindingStartQuiz.btnResponse4.text = (questResponseList[questNumber].response4)
             } else if (rightPlace == 3) {
                 bindingStartQuiz.btnResponse1.text = (questResponseList[questNumber].response2)
                 bindingStartQuiz.btnResponse2.text = (questResponseList[questNumber].response3)
-                bindingStartQuiz.btnResponse3.text = (questResponseList[questNumber].rightResponse)
+                bindingStartQuiz.btnResponse3.text =
+                    (questResponseList[questNumber].rightResponse)
                 bindingStartQuiz.btnResponse4.text = (questResponseList[questNumber].response4)
             } else if (rightPlace == 4) {
                 bindingStartQuiz.btnResponse1.text = (questResponseList[questNumber].response2)
                 bindingStartQuiz.btnResponse2.text = (questResponseList[questNumber].response3)
                 bindingStartQuiz.btnResponse3.text = (questResponseList[questNumber].response4)
-                bindingStartQuiz.btnResponse4.text = (questResponseList[questNumber].rightResponse)
+                bindingStartQuiz.btnResponse4.text =
+                    (questResponseList[questNumber].rightResponse)
             }
         }
     }
 
-    fun playerCreating() {
+    private fun playerCreating() {
 
         /** Подготовка к распределению! */
         val innerArrayNames = ArrayList<String>()
@@ -488,7 +849,10 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                         while (count2 == innerArrayImages.size) {
                             (1..50).random().let {
                                 /** Если женский список содержит этого номера то пихаем*/
-                                if (numbersOfWomenList.contains(it) && !innerArrayImages.contains(it.toString())) {
+                                if (numbersOfWomenList.contains(it) && !innerArrayImages.contains(
+                                        it.toString()
+                                    )
+                                ) {
                                     innerArrayImages.add(it.toString())
                                     Log.d(
                                         TAG, "playerCreating: Создали Женскую иконку $it"
@@ -510,6 +874,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
             avatarIconMap[userAvatarNameIs]
                 ?.let { bindingStartQuiz.playerIcon1.setImageResource(it) }
             bindingStartQuiz.playerName1.text = userNameIs
+            mainUserWindow = bindingStartQuiz.player1win
             playerReadyIconMap["user"] = bindingStartQuiz.playerIcon1
 
             /** После основного пользователя размещаем остальных ботов */
@@ -526,8 +891,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon2,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player2win,
+                            bindingStartQuiz.playerName2
                         )
                     )
                 } else if (i == 1) {
@@ -542,8 +911,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon3,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon3,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player3win,
+                            bindingStartQuiz.playerName3
                         )
                     )
                 } else if (i == 2) {
@@ -558,8 +931,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon4,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon4,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player4win,
+                            bindingStartQuiz.playerName4
                         )
                     )
                 }
@@ -569,6 +946,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                 ?.let { bindingStartQuiz.playerIcon2.setImageResource(it) }
             playerReadyIconMap["user"] = bindingStartQuiz.playerIcon2
             bindingStartQuiz.playerName2.text = userNameIs
+            mainUserWindow = bindingStartQuiz.player2win
 
             for (i in 0..2) {
                 if (i == 0) {
@@ -583,8 +961,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon1,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon1,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player1win,
+                            bindingStartQuiz.playerName1
                         )
                     )
                 } else if (i == 1) {
@@ -599,8 +981,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon3,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon3,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player3win,
+                            bindingStartQuiz.playerName3
                         )
                     )
                 } else if (i == 2) {
@@ -615,8 +1001,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon4,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon4,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player4win,
+                            bindingStartQuiz.playerName4
                         )
                     )
                 }
@@ -626,6 +1016,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                 ?.let { bindingStartQuiz.playerIcon3.setImageResource(it) }
             playerReadyIconMap["user"] = bindingStartQuiz.playerIcon3
             bindingStartQuiz.playerName3.text = userNameIs
+            mainUserWindow = bindingStartQuiz.player3win
 
             for (i in 0..2) {
                 if (i == 0) {
@@ -640,8 +1031,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon1,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon1,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player1win,
+                            bindingStartQuiz.playerName1
                         )
                     )
                 } else if (i == 1) {
@@ -656,8 +1051,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon2,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player2win,
+                            bindingStartQuiz.playerName2
                         )
                     )
                 } else if (i == 2) {
@@ -672,8 +1071,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon4,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon4,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player4win,
+                            bindingStartQuiz.playerName4
                         )
                     )
                 }
@@ -684,6 +1087,7 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                 ?.let { bindingStartQuiz.playerIcon4.setImageResource(it) }
             playerReadyIconMap["user"] = bindingStartQuiz.playerIcon4
             bindingStartQuiz.playerName4.text = userNameIs
+            mainUserWindow = bindingStartQuiz.player4win
 
             for (i in 0..2) {
                 if (i == 0) {
@@ -698,8 +1102,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon1,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon1,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player1win,
+                            bindingStartQuiz.playerName1
                         )
                     )
                 } else if (i == 1) {
@@ -714,8 +1122,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon2,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon2,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player2win,
+                            bindingStartQuiz.playerName2
                         )
                     )
                 } else if (i == 2) {
@@ -730,8 +1142,12 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
                     }
                     botAIList.add(
                         BotAI(
-                            innerArrayNames[i], bindingStartQuiz.playerIcon3,
-                            (70..85).random(), rightPlace
+                            innerArrayNames[i],
+                            bindingStartQuiz.playerIcon3,
+                            (70..85).random(),
+                            rightPlace,
+                            bindingStartQuiz.player3win,
+                            bindingStartQuiz.playerName3
                         )
                     )
                 }
@@ -780,8 +1196,9 @@ class StartQuiz : AppCompatActivity(), View.OnClickListener {
     }
 
 
+    @SuppressLint("ResourceAsColor")
     fun setToUserGaveChooseColor(v: View?) {
-        v?.setBackgroundResource(R.drawable.btn_yellow_tume_custom)
+        v?.setBackgroundResource(R.drawable.btn_purpur_custom)
     }
 
     fun setToGreenColor(v: View?) {

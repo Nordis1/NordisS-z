@@ -12,18 +12,18 @@
         android:layout_width="340dp"
         android:layout_height="65dp"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="4dp"
+        android:layout_marginBottom="60dp"
         android:fontFamily="@font/aldrich"
         android:gravity="center"
         android:text="@string/Quest_one"
         android:textColor="@color/yellow2"
         android:textSize="18sp"
         android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/quest"
@@ -47,14 +47,14 @@
         android:id="@+id/timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:text="20"
         android:textColor="@color/yellow2"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/questionPlace" />
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
     <Button
         android:id="@+id/btnResponse1"
@@ -282,5 +282,57 @@
         app:layout_constraintEnd_toEndOf="@+id/btnResponse4"
         app:layout_constraintStart_toStartOf="@+id/btnResponse4"
         app:layout_constraintTop_toBottomOf="@+id/btnResponse4" />
+
+    <TextView
+        android:id="@+id/player1win"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="0"
+        android:textColor="@color/yellow2"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/playerIcon1"
+        app:layout_constraintStart_toEndOf="@+id/playerIcon1"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <TextView
+        android:id="@+id/player2win"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="0"
+        android:textColor="@color/yellow2"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/playerIcon2"
+        app:layout_constraintStart_toEndOf="@+id/playerIcon2"
+        app:layout_constraintTop_toTopOf="@+id/playerIcon2" />
+
+    <TextView
+        android:id="@+id/player3win"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="0"
+        android:textColor="@color/yellow2"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/playerIcon3"
+        app:layout_constraintStart_toEndOf="@+id/playerIcon3"
+        app:layout_constraintTop_toTopOf="@+id/playerIcon3" />
+
+    <TextView
+        android:id="@+id/player4win"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="0"
+        android:textColor="@color/yellow2"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/playerIcon4"
+        app:layout_constraintStart_toEndOf="@+id/playerIcon4"
+        app:layout_constraintTop_toTopOf="@+id/playerIcon4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

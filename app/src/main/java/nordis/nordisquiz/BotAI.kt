@@ -1,15 +1,18 @@
 package nordis.nordisquiz
 
 import android.widget.ImageView
+import android.widget.TextView
 
 class BotAI(
      var name: String?,
      var icon: ImageView?,
      var aI: Int?,
-     var rightPlace: Int?
+     var rightPlace: Int?,
+     var botResponseTV: TextView?,
+     var botNameTV: TextView?
 )
 {
-
+    var botWinCounter = 0
     var botBoolAnswer = false
     var botAnswer = rightPlace!!
 
@@ -21,7 +24,7 @@ class BotAI(
             while (botAnswer == rightPlace){
                 botAnswer = (1..4).random()
             }
-            botBoolAnswer = true
+            botBoolAnswer = false
         }
         }
     }
